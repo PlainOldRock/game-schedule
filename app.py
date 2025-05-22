@@ -66,6 +66,7 @@ calendar_options = {
         "end": "2025-06-02"  # End is exclusive, so use the day after June 1st
     },
     "expandRows": True,
+    "allDaySlot": False,
 }
 
 def get_initial_events():
