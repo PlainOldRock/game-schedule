@@ -68,7 +68,7 @@ calendar_options = {
         "start": "2025-05-26",
         "end": "2025-06-02"  # End is exclusive, so use the day after June 1st
     },
-    expandRows: True,
+    "expandRows": True,
 }
 
 def get_initial_events():
