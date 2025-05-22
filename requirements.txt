@@ -1,2 +1,3 @@
 streamlit_calendar
 authlib
+requests_oauthlib
