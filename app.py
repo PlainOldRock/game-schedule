@@ -12,8 +12,6 @@ client_id = st.secrets["discord"]["client_id"]
 client_secret = st.secrets["discord"]["client_secret"]
 redirect_uri = st.secrets["discord"]["redirect_uri"]
 
-#http%3A%2F%2Flocalhost%3A8501
-
 authorization_base_url = f'https://discord.com/oauth2/authorize'
 token_url = 'https://discord.com/api/oauth2/token'
 user_info_url = 'https://discord.com/api/users/@me'
@@ -40,8 +38,7 @@ if 'code' in query_params:
     st.image(f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png")
 else:
     auth_url = get_discord_auth_url()
-    if st.button("Log in to Save"):
-        webbrowser.open(auth_url,new=0)
+    st.link_button("Log in to Save",auth_url)
 
 
 st.title("Gaming Week Part 2 Schedule")
