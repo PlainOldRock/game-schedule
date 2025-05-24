@@ -129,7 +129,6 @@ def add_event(state):
     event_game = st.text_input("Game")
     st.time_input("Start Time", value=state["select"]["start"])
     st.time_input("End Time", value=state["select"]["end"])
-    st.write(state)
     if st.button("Add Event"):
         my_id = get_new_id()
         st.session_state['events'][my_id] = {
@@ -146,6 +145,7 @@ def add_event(state):
 
 @st.dialog("Edit Event")
 def edit_event(state,id):
+
     st.session_state["events"][id]["title"]
     st.session_state["events"][id]["start"]
     st.session_state["events"][id]["end"]
@@ -156,6 +156,7 @@ if user_info is not None:
         add_event(state)
         st.toast("Save your changes with 'Save Events'!")
     elif state["callback"] == 'eventClick':
+        st.write(state)
         edit_event(state,state["callback"]["id"])
     if st.button("Save Events"):
         with open("data.json", "w") as fo:
