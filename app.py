@@ -147,7 +147,7 @@ def add_event(state):
     event_end = st.time_input("End Time", value=state["select"]["end"])
     if st.button("Add Event"):
         if check_today_entries() < 2:
-            if check_three_hour_limit(event_start,event_end):
+            if check_three_hour_limit(str(event_start),str(event_end)):
                 my_id = get_new_id()
                 st.session_state['events'][my_id] = {
                     "start": state["select"]["start"],
