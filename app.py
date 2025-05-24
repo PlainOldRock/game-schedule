@@ -44,9 +44,13 @@ else:
 
 st.title("Gaming Week Part 2 Schedule")
 
+if user_info is not None:
+    editable="true"
+else:
+    editable="false"
 
 calendar_options = {
-    "editable": "true",
+    "editable": editable,
     "navLinks": "true",
     "selectable": "true",
     "initialView": "timeGridWeek",
@@ -73,10 +77,10 @@ calendar_options = {
 def get_initial_events():
     if os.path.exists("data.json"):
         with open("data.json","r") as fo:
-            arr = json.load(fo)
+            dic = json.load(fo)
     else:
-        arr = []
-    return arr
+        dic = {}
+    return dic
 
 # Use cached events as default
 if "events" not in st.session_state:
@@ -106,6 +110,18 @@ def run_cal():
 state = run_cal()
 # Store selected range in session state
 
+def get_new_id():
+    if os.path.exists("increment.txt"):
+        with open("increment.txt","r") as fo:
+            inc = fo.read()
+        with open("increment.txt","w") as fp:
+            fp.write(inc + 1)
+    else:
+        inc = 1
+        with open("increment.txt","w") as fp:
+            fp.write(inc)
+    return inc
+
 @st.dialog("Add Event")
 def add_event(state):
     event_title = st.text_input("Event Title")
@@ -114,30 +130,42 @@ def add_event(state):
     st.time_input("End Time", value=state["select"]["end"])
 
     if st.button("Add Event"):
-        st.session_state['events'].append({
+        my_id = get_new_id()
+        st.session_state['events'][my_id] = {
             "start": state["select"]["start"],
             "end":state["select"]["end"],
             "title": event_title,
-            "user": user_info['username']
-        })
+            "user": user_info['username'],
+            "game": event_game,
+            "id":my_id
+        }
         st.rerun()
 
+@st.dialog("Edit Event")
+def edit_event(state,id):
+    st.session_state["events"][id]["title"]
+    st.session_state["events"][id]["start"]
+    st.session_state["events"][id]["end"]
+    st.session_state["events"][id]["game"]
 if user_info is not None:
     if state["callback"] == 'select':
         add_event(state)
+        st.toast("Save your changes with 'Save Events'!")
+    elif state["callback"] == 'eventClick':
+        edit_event(state)
     if st.button("Save Events"):
         with open("data.json", "w") as fo:
             json.dump(st.session_state['events'], fo)
         st.success("Events saved successfully!")
-    if user_info["username"] == "plainoldrock":
-        del_on = st.toggle("Delete Events")
-        if state["callback"] == 'eventClick' and del_on:
-            for e in st.session_state['events']:
-                if e["title"] == state["eventClick"]["event"]["title"]:
-                    st.session_state['events'].remove(e)
-                    st.write("Event removed")
-                    st.rerun()
-                    break
+    #if user_info["username"] == "plainoldrock":
+    #    del_on = st.toggle("Delete Events")
+    #    if state["callback"] == 'eventClick' and del_on:
+    ##        for e in st.session_state['events']:
+     ##           if e["title"] == state["eventClick"]["event"]["title"]:
+      #              st.session_state['events'].remove(e)
+      #              st.write("Event removed")
+      #              st.rerun()
+      #              break
 
-#st.write(st.session_state['events'])
+st.write(st.session_state['events'])
 
