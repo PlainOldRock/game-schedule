@@ -163,9 +163,9 @@ def add_event(state):
                 }
                 st.rerun()
             else:
-                st.write("Event Can't be longer than 3 hours!")
+                st.error("Event Can't be longer than 3 hours!")
         else:
-            st.write("You can only add 2 events per day!")
+            st.error("You can only add 2 events per day!")
         
 
     
