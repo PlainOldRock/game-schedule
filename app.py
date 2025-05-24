@@ -115,7 +115,7 @@ def get_new_id():
         with open("increment.txt","r") as fo:
             inc = int(fo.read())
         with open("increment.txt","w") as fp:
-            fp.write(inc + 1)
+            fp.write(str(inc + 1))
     else:
         inc = 1
         with open("increment.txt","w") as fp:
