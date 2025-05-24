@@ -8,6 +8,7 @@ import os
 import user_cntl
 from datetime import date
 from datetime import timedelta
+from datetime import datetime
 
 scope = ['identify']
 
@@ -131,27 +132,33 @@ def check_today_entries():
         if user_info["username"] == event["user"]:
             if event["created"] == date.today():
                 num_entry += 1
+    return num_entry
 
-
+def check_three_hour_limit(start_time,end_time):
+    str_format = "%Y-%m-%dT%H:%M:%S.%fZ" 
+    return abs(datetime.strptime(start_time,str_format) - datetime.strptime(end_time,str_format)).total_seconds() <= (3 * 3600)
 
 @st.dialog("Add Event")
 def add_event(state):
     event_title = st.text_input("Event Title")
     event_game = st.text_input("Game")
-    st.time_input("Start Time", value=state["select"]["start"])
-    st.time_input("End Time", value=state["select"]["end"])
+    event_start = st.time_input("Start Time", value=state["select"]["start"])
+    event_end = st.time_input("End Time", value=state["select"]["end"])
     if st.button("Add Event"):
         if check_today_entries() < 2:
-            my_id = get_new_id()
-            st.session_state['events'][my_id] = {
-                "start": state["select"]["start"],
-                "end":state["select"]["end"],
-                "title": event_title,
-                "user": user_info['username'],
-                "game": event_game,
-                "id":my_id,
-                "created":str(date.today())
-            }
+            if check_three_hour_limit(event_start,event_end):
+                my_id = get_new_id()
+                st.session_state['events'][my_id] = {
+                    "start": state["select"]["start"],
+                    "end":state["select"]["end"],
+                    "title": event_title,
+                    "user": user_info['username'],
+                    "game": event_game,
+                    "id":my_id,
+                    "created":str(date.today())
+                }
+            else:
+                st.error("Event Can't be longer than 3 hours!")
         else:
             st.error("You can only add 2 events per day!")
         st.rerun()
