@@ -189,7 +189,7 @@ def edit_event(state,id,user_name):
     else:
         st.write("You can only edit your own events!")
 if user_info is not None:
-    if state["callback"] is not None:
+    if "callback" in state:
         if state["callback"] == 'select':
             add_event(state)
             st.toast("Save your changes with 'Save Events'!")
