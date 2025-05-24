@@ -146,10 +146,10 @@ def add_event(state):
 @st.dialog("Edit Event")
 def edit_event(state,id):
 
-    st.session_state["events"][id]["title"]
-    st.session_state["events"][id]["start"]
-    st.session_state["events"][id]["end"]
-    st.session_state["events"][id]["game"]
+    st.text_input("title",value=st.session_state["events"][id]["title"])
+    st.time_input("start time",value=st.session_state["events"][id]["start"])
+    st.time_input("end time",value=st.session_state["events"][id]["end"])
+    st.text_input("Game",value=st.session_state["events"][id]["game"])
 
 if user_info is not None:
     if state["callback"] == 'select':
