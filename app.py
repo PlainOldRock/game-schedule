@@ -147,8 +147,8 @@ def add_event(state):
 def edit_event(state,id):
 
     edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
-    edit_start = st.time_input("start time",value=st.session_state["events"][id]["start"])
-    edit_end = st.time_input("end time",value=st.session_state["events"][id]["end"])
+    edit_start = str(st.time_input("start time",value=st.session_state["events"][id]["start"]))
+    edit_end = str(st.time_input("end time",value=st.session_state["events"][id]["end"]))
     edit_game = st.text_input("Game",value=st.session_state["events"][id]["game"])
 
     save_button = st.button("Save Changes")
