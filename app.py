@@ -88,7 +88,7 @@ if "events" not in st.session_state:
 
 def run_cal():
     state = calendar(
-        events=list(st.session_state.["events"].values()),
+        events=list(st.session_state["events"].values()),
         options=calendar_options,
         custom_css="""
         .fc-event-past {
