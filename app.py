@@ -86,6 +86,7 @@ def get_initial_events():
 if "events" not in st.session_state:
     st.session_state["events"] = get_initial_events()
 
+
 def run_cal():
     state = calendar(
         events=list(st.session_state["events"].values()),
@@ -147,12 +148,13 @@ def edit_event(state,id):
     st.session_state["events"][id]["start"]
     st.session_state["events"][id]["end"]
     st.session_state["events"][id]["game"]
+
 if user_info is not None:
     if state["callback"] == 'select':
         add_event(state)
         st.toast("Save your changes with 'Save Events'!")
     elif state["callback"] == 'eventClick':
-        edit_event(state)
+        edit_event(state,state["callback"]["id"])
     if st.button("Save Events"):
         with open("data.json", "w") as fo:
             json.dump(st.session_state['events'], fo)
