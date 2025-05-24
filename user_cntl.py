@@ -21,3 +21,4 @@ def change_user_color(user_dict:dict,name:str,color):
     user_dict["name"]["color"] = color
     with open("users.json","w") as fp:
         fp.write(json.dumps(user_dict))
+

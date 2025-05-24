@@ -6,6 +6,8 @@ from requests_oauthlib import OAuth2Session
 import json
 import os
 import user_cntl
+from datetime import date
+from datetime import timedelta
 
 scope = ['identify']
 
@@ -123,6 +125,15 @@ def get_new_id():
             fp.write(str(inc))
     return str(inc)
 
+def check_today_entries():
+    num_entry = 0
+    for event in st.session_state["events"].values():
+        if user_info["username"] == event["user"]:
+            if event["created"] == date.today():
+                num_entry += 1
+
+
+
 @st.dialog("Add Event")
 def add_event(state):
     event_title = st.text_input("Event Title")
@@ -130,43 +141,48 @@ def add_event(state):
     st.time_input("Start Time", value=state["select"]["start"])
     st.time_input("End Time", value=state["select"]["end"])
     if st.button("Add Event"):
-        my_id = get_new_id()
-        st.session_state['events'][my_id] = {
-            "start": state["select"]["start"],
-            "end":state["select"]["end"],
-            "title": event_title,
-            "user": user_info['username'],
-            "game": event_game,
-            "id":my_id
-        }
+        if check_today_entries() < 2:
+            my_id = get_new_id()
+            st.session_state['events'][my_id] = {
+                "start": state["select"]["start"],
+                "end":state["select"]["end"],
+                "title": event_title,
+                "user": user_info['username'],
+                "game": event_game,
+                "id":my_id,
+                "created":str(date.today())
+            }
+        else:
+            st.error("You can only add 2 events per day!")
         st.rerun()
 
     
 
 @st.dialog("Edit Event")
-def edit_event(state,id):
+def edit_event(state,id,user_name):
+    if user_name == state["events"][id]["user"]:  
+        edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
+        edit_start = str(st.time_input("start time",value=st.session_state["events"][id]["start"]))
+        edit_end = str(st.time_input("end time",value=st.session_state["events"][id]["end"]))
+        edit_game = st.text_input("Game",value=st.session_state["events"][id]["game"])
 
-    edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
-    edit_start = str(st.time_input("start time",value=st.session_state["events"][id]["start"]))
-    edit_end = str(st.time_input("end time",value=st.session_state["events"][id]["end"]))
-    edit_game = st.text_input("Game",value=st.session_state["events"][id]["game"])
-
-    save_button = st.button("Save Changes")
-    st.write(st.session_state["events"])
-    if save_button:
-        st.session_state["events"][id]["title"] = edit_title
-        st.session_state["events"][id]["start"] = st.session_state["events"][id]["start"][:11] + edit_start + ".000Z"
-        st.session_state["events"][id]["end"] = st.session_state["events"][id]["end"][:11] + edit_end + ".000Z"
-        st.session_state["events"][id]["game"] = edit_game
-        st.rerun()
-
+        save_button = st.button("Save Changes")
+        st.write(st.session_state["events"])
+        if save_button:
+            st.session_state["events"][id]["title"] = edit_title
+            st.session_state["events"][id]["start"] = st.session_state["events"][id]["start"][:11] + edit_start + ".000Z"
+            st.session_state["events"][id]["end"] = st.session_state["events"][id]["end"][:11] + edit_end + ".000Z"
+            st.session_state["events"][id]["game"] = edit_game
+            st.rerun()
+    else:
+        st.write("You can only edit your own events!")
 if user_info is not None:
     if state["callback"] == 'select':
         add_event(state)
         st.toast("Save your changes with 'Save Events'!")
     elif state["callback"] == 'eventClick':
         st.write(state)
-        edit_event(state,state["eventClick"]["event"]["id"])
+        edit_event(state,state["eventClick"]["event"]["id"],user_info["username"])
     if st.button("Save Events"):
         with open("data.json", "w") as fo:
             json.dump(st.session_state['events'], fo)
