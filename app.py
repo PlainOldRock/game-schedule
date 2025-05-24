@@ -157,7 +157,7 @@ def edit_event(state,id):
         st.session_state["events"][id]["start"] = edit_start
         st.session_state["events"][id]["end"] = edit_end
         st.session_state["events"][id]["game"] = edit_game
-        
+        st.rerun()
 
 if user_info is not None:
     if state["callback"] == 'select':
