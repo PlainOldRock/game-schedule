@@ -151,7 +151,8 @@ def edit_event(state,id):
     edit_end = st.time_input("end time",value=st.session_state["events"][id]["end"])
     edit_game = st.text_input("Game",value=st.session_state["events"][id]["game"])
 
-    if st.button("Save Changes"):
+    save_button = st.button("Save Changes")
+    if save_button:
         st.session_state["events"][id]["title"] = edit_title
         st.session_state["events"][id]["start"] = edit_start
         st.session_state["events"][id]["end"] = edit_end
