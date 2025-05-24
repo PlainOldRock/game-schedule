@@ -157,7 +157,7 @@ if user_info is not None:
         st.toast("Save your changes with 'Save Events'!")
     elif state["callback"] == 'eventClick':
         st.write(state)
-        edit_event(state,state["eventClick"]["id"])
+        edit_event(state,state["eventClick"]["event"]["id"])
     if st.button("Save Events"):
         with open("data.json", "w") as fo:
             json.dump(st.session_state['events'], fo)
