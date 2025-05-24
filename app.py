@@ -5,6 +5,7 @@ import webbrowser
 from requests_oauthlib import OAuth2Session
 import json
 import os
+import user_cntl
 
 scope = ['identify']
 
@@ -76,7 +77,6 @@ def get_initial_events():
     else:
         arr = []
     return arr
-
 
 # Use cached events as default
 if "events" not in st.session_state:

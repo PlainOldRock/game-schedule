@@ -1,0 +1,4 @@
+Click to edit your events only (Unless Admin)
+Change Your Color
+Add Games as Resources
+Display User Name on Event
