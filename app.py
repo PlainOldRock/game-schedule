@@ -161,11 +161,12 @@ def add_event(state):
                     "id":my_id,
                     "created":str(date.today())
                 }
+                st.rerun()
             else:
                 st.write("Event Can't be longer than 3 hours!")
         else:
             st.write("You can only add 2 events per day!")
-        st.rerun()
+        
 
     
 
