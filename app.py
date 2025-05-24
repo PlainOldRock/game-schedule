@@ -119,7 +119,7 @@ def get_new_id():
     else:
         inc = 1
         with open("increment.txt","w") as fp:
-            fp.write(inc)
+            fp.write(str(inc))
     return int(inc)
 
 @st.dialog("Add Event")
