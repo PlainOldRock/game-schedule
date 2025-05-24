@@ -113,7 +113,7 @@ state = run_cal()
 def get_new_id():
     if os.path.exists("increment.txt"):
         with open("increment.txt","r") as fo:
-            inc = fo.read()
+            inc = int(fo.read())
         with open("increment.txt","w") as fp:
             fp.write(inc + 1)
     else:
