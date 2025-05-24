@@ -129,7 +129,7 @@ def add_event(state):
     event_game = st.text_input("Game")
     st.time_input("Start Time", value=state["select"]["start"])
     st.time_input("End Time", value=state["select"]["end"])
-
+    st.write(state)
     if st.button("Add Event"):
         my_id = get_new_id()
         st.session_state['events'][my_id] = {
@@ -141,6 +141,8 @@ def add_event(state):
             "id":my_id
         }
         st.rerun()
+
+    
 
 @st.dialog("Edit Event")
 def edit_event(state,id):
