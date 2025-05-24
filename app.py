@@ -157,15 +157,5 @@ if user_info is not None:
         with open("data.json", "w") as fo:
             json.dump(st.session_state['events'], fo)
         st.success("Events saved successfully!")
-    #if user_info["username"] == "plainoldrock":
-    #    del_on = st.toggle("Delete Events")
-    #    if state["callback"] == 'eventClick' and del_on:
-    ##        for e in st.session_state['events']:
-     ##           if e["title"] == state["eventClick"]["event"]["title"]:
-      #              st.session_state['events'].remove(e)
-      #              st.write("Event removed")
-      #              st.rerun()
-      #              break
 
 st.write(st.session_state['events'])
-
