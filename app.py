@@ -155,8 +155,8 @@ def edit_event(state,id):
     st.write(st.session_state["events"])
     if save_button:
         st.session_state["events"][id]["title"] = edit_title
-        st.session_state["events"][id]["start"] = edit_start
-        st.session_state["events"][id]["end"] = edit_end
+        st.session_state["events"][id]["start"][11:16] = edit_start
+        st.session_state["events"][id]["end"][11:16] = edit_end
         st.session_state["events"][id]["game"] = edit_game
         st.rerun()
 
