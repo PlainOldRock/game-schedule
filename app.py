@@ -63,7 +63,8 @@ def user_setting():
     
 if user_info is not None:
     editable="true"
-    if st.button("settings"):
+    setting_button = st.button("settings")
+    if setting_button:
         user_setting()
 else:
     editable="false"
