@@ -17,7 +17,7 @@ class usersDB:
         return user_dict
 
     def create_new_user(name:str):
-        user_dict[name] = {"color":f"#{(str(hex(random.randint(1,16777215)):06d)[2:].upper())}"}
+        user_dict[name] = {"color":f"#{random.randint(1,16777215):06x}"}
         with open("users.json","w") as fp:
             fp.write(json.dumps(user_dict))
 
