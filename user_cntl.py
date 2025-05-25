@@ -22,12 +22,12 @@ class usersDB:
             fp.write(json.dumps(user_dict))
 
     def change_user_color(name:str,color):
-        user_dict["name"]["color"] = color
+        user_dict[name]["color"] = color
         with open("users.json","w") as fp:
             fp.write(json.dumps(user_dict))
 
     def get_user(name : str):
-        return user_dict["name"]
+        return user_dict[name]
 
     def check_user_exists(name : str):
         return name in user_dict.keys()
