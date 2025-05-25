@@ -214,7 +214,7 @@ def edit_event(state,id,user_name):
         delete_button = False
         if start_val > end_val:
             st.error("Start Time must be before end night")
-        elif check_three_hour_limit(st.session_state["events"][id]["start"][:11] + start_val + ".000Z",st.session_state["events"][id]["end"][:11] + end_val + ".000Z"):
+        elif check_three_hour_limit(st.session_state["events"][id]["start"][:11] + str(start_val) + ".000Z",st.session_state["events"][id]["end"][:11] + str(end_val) + ".000Z"):
             st.error("Max 3 Hour Reservation")
         else:
             edit_start = str(start_val)
