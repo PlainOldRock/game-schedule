@@ -52,10 +52,15 @@ else:
 
 st.title("Gaming Week Part 2 Schedule")
 
+def update_colors(username : str, color):
+    for event in st.session_state["events"]:
+        if event["user"] == username:
+            event["color"] = color
+
 @st.dialog("Settings")
 def user_setting():
-    st.color_picker("Pick Your Color", value = user_cntl.get_user()["color"])
-
+    user_cntl.set_color(user_info["username"],st.color_picker("Pick Your Color", value = user_cntl.get_user(user_info["username"])["color"]),callback=update_colors)
+    
 if user_info is not None:
     editable="true"
     if st.button("settings"):

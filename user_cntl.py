@@ -29,7 +29,11 @@ class usersDB:
     def check_user_exists(name : str):
         return name in user_dict.keys()
     
-    
+    def set_color(name,color):
+        user_dict[name]["color"] = color
+        with open("users.json","w") as fo:
+            fo.write(json.dumps(user_dict))
+
     global user_dict
     user_dict = init()
 
