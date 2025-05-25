@@ -161,9 +161,9 @@ def check_today_entries():
     global user_info
     
     for event in st.session_state["events"].values():
-        st.write(f"{event["created"]} == {date.today()}")
+        #st.write(f"{event["created"]} == {date.today()}")
         if user_info["username"] == event["user"]:
-            if event["created"] == date.today():
+            if event["created"] == str(date.today()):
                 num_entry += 1
     return num_entry
 
