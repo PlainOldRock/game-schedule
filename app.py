@@ -64,6 +64,7 @@ if 'code' in query_params:
         user_cntl.usersDB.create_new_user(user_info["username"])
 else:
     auth_url = get_discord_auth_url()
+    admin_mode = False
     st.link_button("Log in to Save",auth_url)
 
 
