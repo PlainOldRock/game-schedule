@@ -180,7 +180,7 @@ def check_today_entries():
     return num_entry
 
 def check_time_inv(check_time_str,start_time_str,end_time_str):
-    str_format = "%Y-%m-%dT%H:%M:%S:%fZ" 
+    str_format = "%Y-%m-%dT%H:%M:%S.%fZ" 
     check_time = datetime.strptime(check_time_str,str_format)
     start_time = datetime.strptime(start_time_str,str_format)
     end_time = datetime.strptime(end_time_str,str_format)
@@ -191,7 +191,7 @@ def check_time_inv(check_time_str,start_time_str,end_time_str):
 
 #added comment
 def check_three_hour_limit(start_time,end_time):
-    str_format = "%Y-%m-%dT%H:%M:%S:%fZ" 
+    str_format = "%Y-%m-%dT%H:%M:%S.%fZ" 
     return abs(datetime.strptime(start_time,str_format) - datetime.strptime(end_time,str_format)).total_seconds() <= (3 * 3600)
 
 def replace_time_on_date(date,time):
@@ -243,7 +243,7 @@ def add_event_button():
     
     event_date = str(st.date_input("Day",min_value=cal_start,max_value=cal_end,format="YYYY-MM-DD"))
     
-    #"%Y-%m-%dT%H:%M:%S:%fZ"
+    #"%Y-%m-%dT%H:%M:%S.%fZ"
     start_time = st.time_input("start time",value="17:00")
     end_time = st.time_input("end time",value="20:00")
     event_start = f"{event_date}T{start_time.hour:02d}:{start_time.minute:02d}.000Z"
