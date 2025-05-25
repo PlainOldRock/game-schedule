@@ -186,7 +186,8 @@ def add_event(state):
                     "user": user_info['username'],
                     "game": event_game,
                     "id":my_id,
-                    "created":str(date.today())
+                    "created":str(date.today()),
+                    "backgroundColor":user_cntl.usersDB.get_user()["color"]
                 }
                 st.rerun()
             else:
