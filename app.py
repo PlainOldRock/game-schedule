@@ -56,7 +56,8 @@ if 'code' in query_params:
                 fd.write("{}")
             with open("users.json","w") as fd:
                 fd.write("")
-
+    else:
+        admin_mode = False
     if user_cntl.usersDB.check_user_exists(user_info["username"]):
         mouse = 1
     else:
@@ -82,13 +83,12 @@ def user_setting():
         update_colors(user_info["username"],set_color)
 
 if user_info is not None:
-    admin_mode = False
     editable="true"
     setting_button = st.button("settings")
     if setting_button:
         user_setting()
 else:
-    admin_mode = False
+
     editable="false"
 
 cal_start = "2025-05-26"
