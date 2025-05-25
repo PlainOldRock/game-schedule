@@ -168,6 +168,16 @@ def check_today_entries():
                 num_entry += 1
     return num_entry
 
+def check_time_inv(check_time_str,start_time_str,end_time_str):
+    str_format = "%Y-%m-%dT%H:%M:%S.%fZ" 
+    check_time = datetime.strptime(check_time_str,str_format)
+    start_time = datetime.strptime(start_time_str,str_format)
+    end_time = datetime.strptime(end_time_str,str_format)
+    if (check_time <= end_time) and (check_time >= start_time):
+        return True
+    else:
+        return False
+
 #added comment
 def check_three_hour_limit(start_time,end_time):
     str_format = "%Y-%m-%dT%H:%M:%S.%fZ" 
@@ -187,18 +197,30 @@ def add_event(state):
     if st.button("Add Event"):
         if check_today_entries() < 2 or admin_mode:
             if check_three_hour_limit(event_start,event_end) or admin_mode:
-                my_id = get_new_id()
-                st.session_state['events'][my_id] = {
-                    "start": event_start,
-                    "end":event_end,
-                    "title": event_title + f"\n{user_info["username"]}\n{event_game}",
-                    "user": user_info['username'],
-                    "game": event_game,
-                    "id":my_id,
-                    "created":str(date.today()),
-                    "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
-                }
-                st.rerun()
+                flag = False
+                for event in st.session_state["events"]:
+                    if check_time_inv(event_start,event["start"],event["end"]):
+                        flag = True
+                        break
+                    elif check_time_inv(event_end,event["start"],event["end"]):
+                        flag = True
+                        break
+                if flag == False:
+                    
+                    my_id = get_new_id()
+                    st.session_state['events'][my_id] = {
+                        "start": event_start,
+                        "end":event_end,
+                        "title": event_title + f"\n{user_info["username"]}\n{event_game}",
+                        "user": user_info['username'],
+                        "game": event_game,
+                        "id":my_id,
+                        "created":str(date.today()),
+                        "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
+                    }
+                    st.rerun()
+                else:
+                    st.error("Events Can't Overlap")
             else:
                 st.error("Event Can't be longer than 3 hours!")
         else:
@@ -209,15 +231,17 @@ def add_event(state):
 
 @st.dialog("Edit Event")
 def edit_event(state,id,user_name):
+    global admin_mode
+    if admin_mode:
+            st.info(f"admin mode {admin_mode}")
     if user_name == st.session_state["events"][id]["user"]:  
         edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
         start_val = st.time_input("start time",value=st.session_state["events"][id]["start"])
         end_val = st.time_input("end time",value=st.session_state["events"][id]["end"])
         save_button = False
         delete_button = False
-        global admin_mode
-        if admin_mode:
-            st.info(f"admin mode {admin_mode}")
+        
+        
         if start_val > end_val:
             st.error("Start Time must be before end night")
         elif (check_three_hour_limit(st.session_state["events"][id]["start"][:11] + str(start_val) + ".000Z",st.session_state["events"][id]["end"][:11] + str(end_val) + ".000Z") == False) and admin_mode == False:
