@@ -180,7 +180,7 @@ def check_today_entries():
     return num_entry
 
 def check_time_inv(check_time_str,start_time_str,end_time_str):
-    str_format = "%Y-%m-%dT%H:%M:%S.%fZ" 
+    str_format = "%Y-%m-%dT%H:%M:%S:%fZ" 
     check_time = datetime.strptime(check_time_str,str_format)
     start_time = datetime.strptime(start_time_str,str_format)
     end_time = datetime.strptime(end_time_str,str_format)
@@ -191,11 +191,11 @@ def check_time_inv(check_time_str,start_time_str,end_time_str):
 
 #added comment
 def check_three_hour_limit(start_time,end_time):
-    str_format = "%Y-%m-%dT%H:%M:%S.%fZ" 
+    str_format = "%Y-%m-%dT%H:%M:%S:%fZ" 
     return abs(datetime.strptime(start_time,str_format) - datetime.strptime(end_time,str_format)).total_seconds() <= (3 * 3600)
 
 def replace_time_on_date(date,time):
-    return date[:11] + time + ".000Z"
+    return date[:11] + time + ":00Z"
 
 @st.dialog("Add Event Select")
 def add_event(state):
@@ -243,7 +243,7 @@ def add_event_button():
     
     event_date = str(st.date_input("Day",min_value=cal_start,max_value=cal_end,format="YYYY-MM-DD"))
     
-    #"%Y-%m-%dT%H:%M:%S.%fZ"
+    #"%Y-%m-%dT%H:%M:%S:%fZ"
     start_time = st.time_input("start time",value="17:00")
     end_time = st.time_input("end time",value="20:00")
     event_start = f"{event_date}T{start_time.hour:02d}:{start_time.minute:02d}:00Z"
@@ -281,7 +281,7 @@ def add_event_button():
             st.error("You can only add 2 events per day!")
 
 def replace_time(date_time_str,newtime):
-    return date_time_str[:11] + str(newtime) + ".000Z"
+    return date_time_str[:11] + str(newtime) + ":00Z"
 
 @st.dialog("Edit Event")
 def edit_event(state,id,user_name):
@@ -308,7 +308,7 @@ def edit_event(state,id,user_name):
             st.error("Events Can't Overlap")
         elif start_val > end_val:
             st.error("Start Time must be before end night")
-        elif (check_three_hour_limit(st.session_state["events"][id]["start"][:11] + str(start_val) + ".000Z",st.session_state["events"][id]["end"][:11] + str(end_val) + ".000Z") == False) and admin_mode == False:
+        elif (check_three_hour_limit(st.session_state["events"][id]["start"][:11] + str(start_val) + ":00Z",st.session_state["events"][id]["end"][:11] + str(end_val) + ":00Z") == False) and admin_mode == False:
             st.error("Max 3 Hour Reservation")
         else:
             edit_start = str(start_val)
@@ -319,8 +319,8 @@ def edit_event(state,id,user_name):
             delete_button = st.button("Delete Event")
         if save_button:
             st.session_state["events"][id]["title"] = edit_title
-            st.session_state["events"][id]["start"] = st.session_state["events"][id]["start"][:11] + edit_start + ".000Z"
-            st.session_state["events"][id]["end"] = st.session_state["events"][id]["end"][:11] + edit_end + ".000Z"
+            st.session_state["events"][id]["start"] = st.session_state["events"][id]["start"][:11] + edit_start + ":00Z"
+            st.session_state["events"][id]["end"] = st.session_state["events"][id]["end"][:11] + edit_end + ":00Z"
             st.session_state["events"][id]["game"] = edit_game
             st.rerun()
         elif delete_button:
