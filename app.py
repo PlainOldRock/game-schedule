@@ -69,8 +69,11 @@ def update_colors(username : str, color):
 
 @st.dialog("Settings")
 def user_setting():
-    user_cntl.usersDB.set_color(user_info["username"],st.color_picker("Pick Your Color", value = user_cntl.usersDB.get_user(user_info["username"])["color"],on_change=update_colors))
-    
+    set_color = st.color_picker("Pick Your Color", value = user_cntl.usersDB.get_user(user_info["username"])["color"])
+    if st.button("Apply"):
+        user_cntl.usersDB.set_color(user_info["username"],set_color)
+        update_colors(user_info["username"],set_color)
+
 if user_info is not None:
     editable="true"
     setting_button = st.button("settings")
