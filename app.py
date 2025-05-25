@@ -84,7 +84,7 @@ else:
     editable="false"
 
 calendar_options = {
-    "editable": editable,
+    "editable": "false",
     "navLinks": "true",
     "selectable": "true",
     "initialView": "timeGridWeek",
@@ -240,7 +240,7 @@ def edit_event(state,id,user_name):
         end_val = st.time_input("end time",value=st.session_state["events"][id]["end"])
         save_button = False
         delete_button = False
-        
+
         flag = False
         for event in st.session_state["events"].values():
             
