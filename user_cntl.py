@@ -7,7 +7,10 @@ class usersDB:
     def init():
         if os.path.exists("users.json"):
             with open("users.json","r") as fo:
-                user_dict = json.load(fo)
+                try:
+                    user_dict = json.load(fo)
+                except:
+                    user_dict = {}
         else:
             with open("users.json","w") as fo:
                 user_dict = {}
