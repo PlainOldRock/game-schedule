@@ -246,8 +246,8 @@ def add_event_button():
     #"%Y-%m-%dT%H:%M:%S.%fZ"
     start_time = st.time_input("start time",value="17:00")
     end_time = st.time_input("end time",value="20:00")
-    event_start = f"{event_date}T{start_time.hour}:{start_time.minute}:00Z"
-    event_end = f"{event_date}T{end_time.hour}:{end_time.minute}:00Z"
+    event_start = f"{event_date}T{start_time.hour}:{start_time.minute:02d}:00Z"
+    event_end = f"{event_date}T{end_time.hour}:{end_time.minute:02d}:00Z"
     global admin_mode
     if st.button("Add Event"):
         if check_today_entries() < 2 or admin_mode:
