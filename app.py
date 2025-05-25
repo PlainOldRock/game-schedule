@@ -40,6 +40,15 @@ if 'code' in query_params:
     user_info = fetch_user_info(query_params['code'])
     st.success(f"Logged in as {user_info['username']}")
     st.image(f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png")
+    if user_info["username"] == "plainoldrock":
+        reset_button = st.button("Reset")
+        if reset_button:
+            empty_dict = {}
+            with open("data.json","w") as fd:
+                fd.write(json.loads(empty_dict))
+            with open("users.json","w") as fd:
+                fd.write(json.loads(empty_dict))
+
     if user_cntl.usersDB.check_user_exists(user_info["username"]):
         mouse = 1
     else:
