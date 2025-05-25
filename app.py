@@ -237,7 +237,7 @@ def add_event(state):
             st.error("You can only add 2 events per day!")
         
 @st.dialog("Add Event Button")
-def add_event():
+def add_event_button():
     event_title = st.text_input("Event Title")
     event_game = st.text_input("Game")
     
@@ -332,7 +332,7 @@ if user_info is not None:
     if "callback" in state:
         add_event_called = st.button("Add New Event")
         if add_event_called:
-            add_event()
+            add_event_button()
         elif state["callback"] == 'select':
             add_event(state)
             st.toast("Save your changes with 'Save Events'!")
