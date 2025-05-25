@@ -42,6 +42,7 @@ if 'code' in query_params:
     st.image(f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png")
     if user_info["username"] == "plainoldrock":
         reset_button = st.button("Reset")
+        admin_mode = st.toggle("Admin Mode",value=False)
         if reset_button:
             empty_dict = {}
             with open("data.json","w") as fd:
@@ -180,10 +181,12 @@ def add_event(state):
     event_title = st.text_input("Event Title")
     event_game = st.text_input("Game")
     event_start = replace_time_on_date(state["select"]["start"],str(st.time_input("Start Time", value=state["select"]["start"])))
+    
     event_end = replace_time_on_date(state["select"]["end"],str(st.time_input("End Time", value=state["select"]["end"])))
+    global admin_mode
     if st.button("Add Event"):
-        if check_today_entries() < 2:
-            if check_three_hour_limit(event_start,event_end):
+        if check_today_entries() < 2 or admin_mode:
+            if check_three_hour_limit(event_start,event_end) or admin_mode:
                 my_id = get_new_id()
                 st.session_state['events'][my_id] = {
                     "start": event_start,
