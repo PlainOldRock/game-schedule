@@ -208,12 +208,18 @@ def add_event(state):
 def edit_event(state,id,user_name):
     if user_name == st.session_state["events"][id]["user"]:  
         edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
-        edit_start = str(st.time_input("start time",value=st.session_state["events"][id]["start"]))
-        edit_end = str(st.time_input("end time",value=st.session_state["events"][id]["end"]))
-        edit_game = st.text_input("Game",value=st.session_state["events"][id]["game"])
+        start_val = st.time_input("start time",value=st.session_state["events"][id]["start"])
+        end_val = st.time_input("end time",value=st.session_state["events"][id]["end"])
 
-        save_button = st.button("Save Changes")
-        delete_button = st.button("Delete Event")
+        if start_val < end_val:
+            st.error("Start Time must be before end night")
+        else:
+            edit_start = str(start_val)
+            edit_end = str(end_val)
+            edit_game = st.text_input("Game",value=st.session_state["events"][id]["game"])
+    
+            save_button = st.button("Save Changes")
+            delete_button = st.button("Delete Event")
         if save_button:
             st.session_state["events"][id]["title"] = edit_title
             st.session_state["events"][id]["start"] = st.session_state["events"][id]["start"][:11] + edit_start + ".000Z"
