@@ -227,4 +227,4 @@ if user_info is not None:
             json.dump(st.session_state['events'], fo)
         st.success("Events saved successfully!")
 
-st.write(f"output{user_cntl.usersDB.get_user}")
+st.write(f"output{user_cntl.usersDB.init()}")
