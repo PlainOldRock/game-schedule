@@ -327,7 +327,7 @@ def edit_event(state,id,user_name):
         st.write("You can only edit your own events!")
 if user_info is not None:
     if "callback" in state:
-        add_event_called = st.button("Add Event")
+        add_event_called = st.button("Add New Event")
         if add_event_called:
             add_event()
         elif state["callback"] == 'select':
