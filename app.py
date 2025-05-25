@@ -82,11 +82,13 @@ def user_setting():
         update_colors(user_info["username"],set_color)
 
 if user_info is not None:
+    admin_mode = False
     editable="true"
     setting_button = st.button("settings")
     if setting_button:
         user_setting()
 else:
+    admin_mode = False
     editable="false"
 
 cal_start = "2025-05-26"
