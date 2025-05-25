@@ -198,7 +198,7 @@ def add_event(state):
         if check_today_entries() < 2 or admin_mode:
             if check_three_hour_limit(event_start,event_end) or admin_mode:
                 flag = False
-                for event in st.session_state["events"]:
+                for event in st.session_state["events"].values():
                     if check_time_inv(event_start,event["start"],event["end"]):
                         flag = True
                         break
