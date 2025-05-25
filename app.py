@@ -159,6 +159,7 @@ def get_new_id():
 def check_today_entries():
     num_entry = 0
     global user_info
+    print(f"{event["created"]} == {date.today()}")
     for event in st.session_state["events"].values():
         if user_info["username"] == event["user"]:
             if event["created"] == date.today():
