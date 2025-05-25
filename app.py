@@ -65,6 +65,7 @@ def update_colors(username : str, color):
     for event in st.session_state["events"]:
         if event["user"] == username:
             event["backgroundColor"] = color
+    st.rerun()
 
 @st.dialog("Settings")
 def user_setting():
