@@ -188,7 +188,7 @@ def add_event(state):
                 st.session_state['events'][my_id] = {
                     "start": event_start,
                     "end":event_end,
-                    "title": event_title + f"\n{user_info["username"]}",
+                    "title": event_title + f"\n{user_info["username"]}\n{event_game}",
                     "user": user_info['username'],
                     "game": event_game,
                     "id":my_id,
