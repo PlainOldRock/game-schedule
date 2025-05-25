@@ -68,7 +68,7 @@ def update_colors(username : str, color):
 
 @st.dialog("Settings")
 def user_setting():
-    user_cntl.usersDB.set_color(user_info["username"],st.color_picker("Pick Your Color", value = user_cntl.usersDB.get_user(user_info["username"])["color"]),on_change=update_colors)
+    user_cntl.usersDB.set_color(user_info["username"],st.color_picker("Pick Your Color", value = user_cntl.usersDB.get_user(user_info["username"])["color"],on_change=update_colors))
     
 if user_info is not None:
     editable="true"
