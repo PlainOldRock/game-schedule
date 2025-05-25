@@ -89,13 +89,15 @@ if user_info is not None:
 else:
     editable="false"
 
+cal_start = "2025-05-26"
+cal_end = "2025-05-31"
 calendar_options = {
     "editable": "false",
     "navLinks": "true",
     "selectable": "true",
     "initialView": "timeGridWeek",
-    "start": "2025-05-26",
-    "end": "2025-05-31",
+    "start": cal_start,
+    "end": cal_end,
     "slotMinTime": "17:00:00",
     "slotMaxTime": "23:00:00",
     "firstDay": 1,
@@ -231,6 +233,49 @@ def add_event(state):
         else:
             st.error("You can only add 2 events per day!")
         
+@st.dialog("Add Event")
+def add_event():
+    event_title = st.text_input("Event Title")
+    event_game = st.text_input("Game")
+    
+    event_date = str(st.date_input("Day",min_value=cal_start,max_value=cal_end,format="YYYY-MM-DD"))
+    
+    #"%Y-%m-%dT%H:%M:%S.%fZ"
+    start_time = st.time_input("start time",value="17:00")
+    end_time = st.time_input("end time",value="20:00")
+    event_start = f"{event_date}T{start_time.hour}:{start_time.minute}:00.000Z"
+    event_end = f"{event_date}T{end_time.hour}:{end_time.minute}:00.000Z"
+    global admin_mode
+    if st.button("Add Event"):
+        if check_today_entries() < 2 or admin_mode:
+            if check_three_hour_limit(event_start,event_end) or admin_mode:
+                flag = False
+                for event in st.session_state["events"].values():
+                    if check_time_inv(event_start,event["start"],event["end"]):
+                        flag = True
+                        break
+                    elif check_time_inv(event_end,event["start"],event["end"]):
+                        flag = True
+                        break
+                if flag == False:
+                    my_id = get_new_id()
+                    st.session_state['events'][my_id] = {
+                        "start": event_start,
+                        "end":event_end,
+                        "title": event_title + f"\n{user_info["username"]}\n{event_game}",
+                        "user": user_info['username'],
+                        "game": event_game,
+                        "id":my_id,
+                        "created":str(date.today()),
+                        "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
+                    }
+                    st.rerun()
+                else:
+                    st.error("Events Can't Overlap")
+            else:
+                st.error("Event Can't be longer than 3 hours!")
+        else:
+            st.error("You can only add 2 events per day!")
 
 def replace_time(date_time_str,newtime):
     return date_time_str[:11] + str(newtime) + ".000Z"
@@ -282,7 +327,9 @@ def edit_event(state,id,user_name):
         st.write("You can only edit your own events!")
 if user_info is not None:
     if "callback" in state:
-        if state["callback"] == 'select':
+        if st.button("Add Event"):
+            add_event()
+        elif state["callback"] == 'select':
             add_event(state)
             st.toast("Save your changes with 'Save Events'!")
         elif state["callback"] == 'eventClick':
