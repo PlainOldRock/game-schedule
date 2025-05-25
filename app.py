@@ -197,7 +197,7 @@ def check_three_hour_limit(start_time,end_time):
 def replace_time_on_date(date,time):
     return date[:11] + time + ".000Z"
 
-@st.dialog("Add Event")
+@st.dialog("Add Event Select")
 def add_event(state):
     event_title = st.text_input("Event Title")
     event_game = st.text_input("Game")
@@ -236,7 +236,7 @@ def add_event(state):
         else:
             st.error("You can only add 2 events per day!")
         
-@st.dialog("Add Event")
+@st.dialog("Add Event Button")
 def add_event():
     event_title = st.text_input("Event Title")
     event_game = st.text_input("Game")
