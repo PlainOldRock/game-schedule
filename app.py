@@ -213,12 +213,15 @@ def edit_event(state,id,user_name):
         edit_game = st.text_input("Game",value=st.session_state["events"][id]["game"])
 
         save_button = st.button("Save Changes")
-        st.write(st.session_state["events"])
+        delete_button = st.button("Delete Event")
         if save_button:
             st.session_state["events"][id]["title"] = edit_title
             st.session_state["events"][id]["start"] = st.session_state["events"][id]["start"][:11] + edit_start + ".000Z"
             st.session_state["events"][id]["end"] = st.session_state["events"][id]["end"][:11] + edit_end + ".000Z"
             st.session_state["events"][id]["game"] = edit_game
+            st.rerun()
+        elif delete_button:
+            del st.session_state["events"][id]
             st.rerun()
     else:
         st.write("You can only edit your own events!")
