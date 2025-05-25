@@ -41,7 +41,7 @@ if 'code' in query_params:
     st.success(f"Logged in as {user_info['username']}")
     st.image(f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png")
     if user_cntl.check_user_exists(user_info["username"]):
-        1 = 1
+        mouse = 1
     else:
         user_cntl.create_new_user(user_info["username"])
 
