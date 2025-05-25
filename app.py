@@ -45,9 +45,9 @@ if 'code' in query_params:
         if reset_button:
             empty_dict = {}
             with open("data.json","w") as fd:
-                fd.write(json.loads(empty_dict))
+                fd.write(json.loads([]))
             with open("users.json","w") as fd:
-                fd.write(json.loads(empty_dict))
+                fd.write(json.loads([]))
 
     if user_cntl.usersDB.check_user_exists(user_info["username"]):
         mouse = 1
