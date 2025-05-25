@@ -211,6 +211,7 @@ def edit_event(state,id,user_name):
         start_val = st.time_input("start time",value=st.session_state["events"][id]["start"])
         end_val = st.time_input("end time",value=st.session_state["events"][id]["end"])
         save_button = False
+        delete_button = False
         if start_val > end_val:
             st.error("Start Time must be before end night")
         else:
