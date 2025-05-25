@@ -249,7 +249,7 @@ def edit_event(state,id,user_name):
             elif check_time_inv(replace_time(event["end"],end_val),event["start"],event["end"]):
                 flag = True
                 break
-        if flag == True and admin_mode=False:
+        if flag == True and admin_mode==False:
             st.error("Events Can't Overlap")
         elif start_val > end_val:
             st.error("Start Time must be before end night")
