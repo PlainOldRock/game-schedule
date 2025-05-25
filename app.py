@@ -173,7 +173,7 @@ def check_time_inv(check_time_str,start_time_str,end_time_str):
     check_time = datetime.strptime(check_time_str,str_format)
     start_time = datetime.strptime(start_time_str,str_format)
     end_time = datetime.strptime(end_time_str,str_format)
-    if (check_time <= end_time) and (check_time >= start_time):
+    if (check_time < end_time) and (check_time > start_time):
         return True
     else:
         return False
