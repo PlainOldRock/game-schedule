@@ -22,6 +22,7 @@ user_info_url = 'https://discord.com/api/users/@me'
 
 user_info = None
 
+
 def get_discord_auth_url():
     discord = OAuth2Session(client_id, redirect_uri=redirect_uri, scope=scope)
     authorization_url, state = discord.authorization_url(authorization_base_url)
@@ -37,9 +38,15 @@ def fetch_user_info(code):
 
 query_params = st.query_params
 if 'code' in query_params:
-    user_info = fetch_user_info(query_params['code'])
-    st.success(f"Logged in as {user_info['username']}")
-    st.image(f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png")
+    if query_params['code'] == 'test_user':
+        user_info = {'username':'tester'}
+        st.info("logged in as Test User")
+    else:
+        user_info = fetch_user_info(query_params['code'])
+        st.success(f"Logged in as {user_info['username']}")
+        st.image(f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png")
+
+        
     if user_info["username"] == "plainoldrock":
         reset_button = st.button("Reset")
         admin_mode = st.toggle("Admin Mode",value=False)
@@ -54,7 +61,6 @@ if 'code' in query_params:
         mouse = 1
     else:
         user_cntl.usersDB.create_new_user(user_info["username"])
-
 else:
     auth_url = get_discord_auth_url()
     st.link_button("Log in to Save",auth_url)
