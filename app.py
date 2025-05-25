@@ -40,6 +40,11 @@ if 'code' in query_params:
     user_info = fetch_user_info(query_params['code'])
     st.success(f"Logged in as {user_info['username']}")
     st.image(f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png")
+    if user_cntl.check_user_exists(user_info["username"]):
+        1 = 1
+    else:
+        user_cntl.create_new_user(user_info["username"])
+
 else:
     auth_url = get_discord_auth_url()
     st.link_button("Log in to Save",auth_url)
@@ -47,8 +52,14 @@ else:
 
 st.title("Gaming Week Part 2 Schedule")
 
+@st.dialog("Settings")
+def user_setting():
+    st.color_picker("Pick Your Color", value = user_cntl.get_user()["color"])
+
 if user_info is not None:
     editable="true"
+    if st.button("settings"):
+        user_setting()
 else:
     editable="false"
 
