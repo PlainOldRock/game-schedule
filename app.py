@@ -40,10 +40,10 @@ if 'code' in query_params:
     user_info = fetch_user_info(query_params['code'])
     st.success(f"Logged in as {user_info['username']}")
     st.image(f"https://cdn.discordapp.com/avatars/{user_info['id']}/{user_info['avatar']}.png")
-    if user_cntl.check_user_exists(user_info["username"]):
+    if user_cntl.usersDB.check_user_exists(user_info["username"]):
         mouse = 1
     else:
-        user_cntl.create_new_user(user_info["username"])
+        user_cntl.usersDB.create_new_user(user_info["username"])
 
 else:
     auth_url = get_discord_auth_url()
@@ -59,7 +59,7 @@ def update_colors(username : str, color):
 
 @st.dialog("Settings")
 def user_setting():
-    user_cntl.set_color(user_info["username"],st.color_picker("Pick Your Color", value = user_cntl.get_user(user_info["username"])["color"]),callback=update_colors)
+    user_cntl.usersDB.set_color(user_info["username"],st.color_picker("Pick Your Color", value = user_cntl.usersDB.get_user(user_info["username"])["color"]),callback=update_colors)
     
 if user_info is not None:
     editable="true"
