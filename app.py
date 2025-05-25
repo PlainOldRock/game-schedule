@@ -239,8 +239,8 @@ def replace_time(date_time_str,newtime):
 def edit_event(state,id,user_name):
     global admin_mode
     if admin_mode:
-            st.info(f"admin mode {admin_mode}")
-    if user_name == st.session_state["events"][id]["user"]:  
+        st.info(f"admin mode {admin_mode}")
+    if (user_name == st.session_state["events"][id]["user"]) or admin_mode == True:  
         edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
         start_val = st.time_input("start time",value=st.session_state["events"][id]["start"])
         end_val = st.time_input("end time",value=st.session_state["events"][id]["end"])
