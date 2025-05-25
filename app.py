@@ -227,7 +227,8 @@ def add_event(state):
             st.error("You can only add 2 events per day!")
         
 
-    
+def replace_time(date_time_str,newtime):
+    return date_time_str[:11] + str(newtime) + ".000Z"
 
 @st.dialog("Edit Event")
 def edit_event(state,id,user_name):
@@ -241,8 +242,16 @@ def edit_event(state,id,user_name):
         save_button = False
         delete_button = False
         
-        
-        if start_val > end_val:
+        for event in st.session_state["events"].values():
+            if check_time_inv(replace_time(event["start"],start_val),event["start"],event["end"]):
+                flag = True
+                break
+            elif check_time_inv(replace_time(event["end"],end_val),event["start"],event["end"]):
+                flag = True
+                break
+        if flag == True and admin_mode=False:
+            st.error("Events Can't Overlap")
+        elif start_val > end_val:
             st.error("Start Time must be before end night")
         elif (check_three_hour_limit(st.session_state["events"][id]["start"][:11] + str(start_val) + ".000Z",st.session_state["events"][id]["end"][:11] + str(end_val) + ".000Z") == False) and admin_mode == False:
             st.error("Max 3 Hour Reservation")
