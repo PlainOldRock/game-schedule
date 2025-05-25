@@ -206,7 +206,6 @@ def add_event(state):
                         flag = True
                         break
                 if flag == False:
-                    
                     my_id = get_new_id()
                     st.session_state['events'][my_id] = {
                         "start": event_start,
@@ -242,7 +241,9 @@ def edit_event(state,id,user_name):
         save_button = False
         delete_button = False
         
+        flag = False
         for event in st.session_state["events"].values():
+            
             if check_time_inv(replace_time(event["start"],start_val),event["start"],event["end"]):
                 flag = True
                 break
