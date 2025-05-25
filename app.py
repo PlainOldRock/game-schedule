@@ -206,7 +206,7 @@ def add_event(state):
 
 @st.dialog("Edit Event")
 def edit_event(state,id,user_name):
-    if user_name == state["events"][id]["user"]:  
+    if user_name == st.session_state["events"][id]["user"]:  
         edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
         edit_start = str(st.time_input("start time",value=st.session_state["events"][id]["start"]))
         edit_end = str(st.time_input("end time",value=st.session_state["events"][id]["end"]))
