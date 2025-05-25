@@ -166,6 +166,7 @@ def check_today_entries():
                 num_entry += 1
     return num_entry
 
+#added comment
 def check_three_hour_limit(start_time,end_time):
     str_format = "%Y-%m-%dT%H:%M:%S.%fZ" 
     return abs(datetime.strptime(start_time,str_format) - datetime.strptime(end_time,str_format)).total_seconds() <= (3 * 3600)
