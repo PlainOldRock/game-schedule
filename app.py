@@ -131,7 +131,7 @@ calendar_options = {
 def get_initial_events():
     if os.path.exists("data.json"):
         with open("data.json","r") as fo:
-            dic = json.loads(fo)
+            dic = json.load(fo)
     else:
         dic = {}
     return dic
