@@ -6,6 +6,7 @@ import json
 class Db_conn:
     def __init__(self,db_user : str,db_pw : str):
         self.connection = None
+        self.cursor = None
         try:
             self.connection = mysql.connector.connect(
                 host='plainoldrock.duckdns.org',
