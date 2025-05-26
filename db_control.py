@@ -92,6 +92,8 @@ class Db_conn:
     def update_all_event_colors(self,username : str, color : str):
         cur = self.get_cursor()
         cur.execute(f"UPDATE DISCORD_SCHEDULE.SCHEDULE_DATA SET BGCOLOR = '{color}' WHERE USER = '{username}'")
+        self.get_connection().commit()
+        return True
 
 
     def del_event(self,id : int):
