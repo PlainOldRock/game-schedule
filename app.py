@@ -99,7 +99,7 @@ else:
     editable="false"
 
 cal_start = "2025-05-26"
-cal_end = "2025-05-31"
+cal_end = "2025-06-01"
 calendar_options = {
     "editable": "false",
     "navLinks": "true",
