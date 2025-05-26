@@ -84,7 +84,6 @@ class Db_conn:
         '{event_dict['game']}',
         '{event_dict['created']}'
         )""")
-        print(f"-----------------{ex_str}")
         cur.execute(ex_str)
         ret = cur.fetchall()
         self.get_connection().commit()
