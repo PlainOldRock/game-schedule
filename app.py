@@ -227,7 +227,7 @@ def add_event(state):
                         "id":my_id,
                         "created":str(date.today()),
                         "backgroundColor":db_conn.get_user_color(user_info["username"])
-                    })
+                    }
                     refresh_events()
                     st.rerun()
                 else:
