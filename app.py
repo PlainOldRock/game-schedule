@@ -294,7 +294,7 @@ def replace_time(date_time_str,newtime):
     return date_time_str[:11] + str(newtime) + ".000Z"
 
 @st.dialog("Edit Event")
-def edit_event(state,id,user_name):
+def edit_event(state,id : int,user_name):
     global admin_mode
     if admin_mode:
         st.info(f"admin mode {admin_mode}")
@@ -328,13 +328,14 @@ def edit_event(state,id,user_name):
             save_button = st.button("Save Changes")
             delete_button = st.button("Delete Event")
         if save_button:
-            st.session_state["events"][id]["title"] = edit_title
-            st.session_state["events"][id]["start"] = st.session_state["events"][id]["start"][:11] + edit_start + ".000Z"
-            st.session_state["events"][id]["end"] = st.session_state["events"][id]["end"][:11] + edit_end + ".000Z"
-            st.session_state["events"][id]["game"] = edit_game
+            db_conn.edit_event(id,'TITLE',edit_title)
+            db_conn.edit_event(id,'START',replace_time_on_date(st.session_state["events"][id]["start"],edit_start))
+            db_conn.edit_event(id,'END',replace_time_on_date(st.session_state["events"][id]["end"],edit_start))
+            db_conn.edit_event(id,'GAME',edit_game)
+            get_initial_events()
             st.rerun()
         elif delete_button:
-            del st.session_state["events"][id]
+            db_conn.del_event(id)
             st.rerun()
     else:
         st.write("You can only edit your own events!")
