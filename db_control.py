@@ -87,16 +87,19 @@ class Db_conn:
         cur.execute(ex_str)
         ret = cur.fetchall()
         self.get_connection().commit()
-        return ret
+        return True
 
     def del_event(self,id : int):
         cur = self.get_cursor()
         cur.execute(f"""DELETE FROM DISCORD_SCHEDULE.SCHEDULE_DATA WHERE ID = {id}""")
         self.get_connection().commit()
+        return True
+
     def edit_event(self,id : int, field : str, new_val):
         cur = self.get_cursor()
         cur.execute(f"""UPDATE DISCORD_SCHEDULE.SCHEDULE_DATA SET {field} = '{new_val}' WHERE ID = {id}""")
         self.get_connection().commit()
+        return True
 
     def get_event(self,id : int):
         cur = self.get_cursor()
@@ -122,6 +125,7 @@ class Db_conn:
         cur.execute(f"INSERT INTO DISCORD_SCHEDULE.USERS VALUE('{name}','{color}','{flag}')")
         self.get_connection().commit()
         return cur.fetchall()
+    
     def set_user_color(self,name : str, color : str):
         cur = self.get_cursor()
         cur.execute(f"UPDATE DISCORD_SCHEDULE.USERS SET COLOR = '{color}' WHERE USER = '{name}'")
