@@ -338,6 +338,7 @@ def edit_event(state,id : int,user_name):
             refresh_events()
         elif delete_button:
             db_conn.del_event(id)
+            refresh_events()
     else:
         st.write("You can only edit your own events!")
     return True
