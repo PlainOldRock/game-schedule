@@ -9,6 +9,10 @@ import user_cntl
 from datetime import date
 from datetime import timedelta
 from datetime import datetime
+import db_control
+
+
+db_conn = db_control.Db_conn(st.secrets["db_conn"]["db_user"],st.secrets["db_conn"]["db_pw"])
 
 scope = ['identify']
 
