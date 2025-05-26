@@ -237,6 +237,7 @@ def add_event(state):
                         "created":str(date.today()),
                         "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
                     })
+                    get_initial_events()
                     st.rerun()
                 else:
                     st.error("Events Can't Overlap")
