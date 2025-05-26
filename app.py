@@ -357,5 +357,5 @@ if user_info is not None:
             edit_event(state,int(state["eventClick"]["event"]["id"]),user_info["username"])
 if admin_mode:
     st.write(state)
-    for event in st.session_state["events"]:
+    for event in st.session_state["events"].values():
         st.write(f"{event['user']},{event['color']}")
