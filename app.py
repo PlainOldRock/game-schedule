@@ -67,6 +67,7 @@ if 'code' in query_params:
             #id_sel = st.select_box("id to edit",value=None)
             #if id_sel is not None:
             #    del st.session_state["events"][int(id_sel)]
+            # WOrk pls
     else:
         admin_mode = False
     if user_cntl.usersDB.check_user_exists(user_info["username"]):
