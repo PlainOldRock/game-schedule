@@ -2,21 +2,22 @@
 import mysql.connector
 from mysql.connector import Error
 import json
+import random
 
 class Db_conn:
     def __init__(self,db_user : str,db_pw : str):
-        try:
-            self.connection = mysql.connector.connect(
-                host='plainoldrock.duckdns.org',
-                port="3306",
-                database='DISCORD_SCHEDULE',
-                user=db_user,
-                password=db_pw
-            )
-        except Error as e:
-            print(f"Error in Connection {e}")
+        self.connection = None
+        self.cursor = None
+        self.connection = mysql.connector.connect(
+            host='plainoldrock.duckdns.org',
+            port="3306",
+            database='DISCORD_SCHEDULE',
+            user=str(db_user),
+            password=str(db_pw),
+            auth_plugin="mysql_native_password"
+        )
         
-        if self.connection.is_connected():
+        if self.connection is not None:
             self.cursor = self.connection.cursor(dictionary=True)
             print("MySQL connection is working")
         else:
@@ -27,25 +28,38 @@ class Db_conn:
     def get_connection(self):
         return self.connection
 
-    def get_data(self):
+    def get_data(self,ex_props=True):
         cur = self.get_cursor()
         cur.execute("SELECT * FROM DISCORD_SCHEDULE.SCHEDULE_DATA")
         data_array = cur.fetchall()
         data_dict = {}
         for dd in data_array:
-            data_dict[int(dd['ID'])] = {
-                "allDay":str(bool(dd['ALLDAY'])).lower(),
-                "title":dd['TITLE'],
-                "start":dd['START'],
-                "end":dd['END'],
-                "id":dd["ID"],
-                "backgroundColor":dd["BGCOLOR"],
-                "extendedProps":{
+            if ex_props:
+                data_dict[int(dd['ID'])] = {
+                    "allDay":False,
+                    "title":dd['TITLE'],
+                    "start":dd['START'],
+                    "end":dd['END'],
+                    "id":dd["ID"],
+                    "backgroundColor":dd["BGCOLOR"],
+                    "extendedProps":{
+                        "user":dd["USER"],
+                        "game":dd["GAME"],
+                        "created":dd["CREATED"]
+                    }
+                }
+            else:
+                data_dict[int(dd['ID'])] = {
+                    "allDay":False,
+                    "title":dd['TITLE'],
+                    "start":dd['START'],
+                    "end":dd['END'],
+                    "id":dd["ID"],
+                    "backgroundColor":dd["BGCOLOR"],
                     "user":dd["USER"],
                     "game":dd["GAME"],
                     "created":dd["CREATED"]
                 }
-            }
         return data_dict
 
     def add_event(self,event_dict):
@@ -61,29 +75,39 @@ class Db_conn:
             CREATED
             ) 
             VALUES(
-        {event_dict['allDay']},
+        0,
         '{event_dict['title']}',
         '{event_dict['start']}',
         '{event_dict['end']}',
         '{event_dict['backgroundColor']}',
-        '{event_dict['extendedProps']['user']}',
-        '{event_dict['extendedProps']['game']}',
-        '{event_dict['extendedProps']['created']}'
+        '{event_dict['user']}',
+        '{event_dict['game']}',
+        '{event_dict['created']}'
         )""")
         print(f"-----------------{ex_str}")
         cur.execute(ex_str)
         ret = cur.fetchall()
         self.get_connection().commit()
-        return ret
+        return True
+
+    def update_all_event_colors(self,username : str, color : str):
+        cur = self.get_cursor()
+        cur.execute(f"UPDATE DISCORD_SCHEDULE.SCHEDULE_DATA SET BGCOLOR = '{color}' WHERE USER = '{username}'")
+        self.get_connection().commit()
+        return True
+
 
     def del_event(self,id : int):
         cur = self.get_cursor()
         cur.execute(f"""DELETE FROM DISCORD_SCHEDULE.SCHEDULE_DATA WHERE ID = {id}""")
         self.get_connection().commit()
+        return True
+
     def edit_event(self,id : int, field : str, new_val):
         cur = self.get_cursor()
         cur.execute(f"""UPDATE DISCORD_SCHEDULE.SCHEDULE_DATA SET {field} = '{new_val}' WHERE ID = {id}""")
         self.get_connection().commit()
+        return True
 
     def get_event(self,id : int):
         cur = self.get_cursor()
@@ -104,11 +128,22 @@ class Db_conn:
             return event_dict
         else:
             return None
-    def add_user(self,name : str,color : str, flag = ''):
+    def add_user(self,name, flag = ''):
+        color = f"#{random.randint(1,16777215):06x}"
+
         cur = self.get_cursor()
         cur.execute(f"INSERT INTO DISCORD_SCHEDULE.USERS VALUE('{name}','{color}','{flag}')")
         self.get_connection().commit()
         return cur.fetchall()
+    
+    def check_user(self,name : str):
+        cur = self.get_cursor()
+        cur.execute(f"SELECT COUNT(*) U_CHECK FROM DISCORD_SCHEDULE.USERS WHERE USER = '{name}'")
+        if cur.fetchone()['U_CHECK'] == 0:
+            return False
+        else:
+            return True
+
     def set_user_color(self,name : str, color : str):
         cur = self.get_cursor()
         cur.execute(f"UPDATE DISCORD_SCHEDULE.USERS SET COLOR = '{color}' WHERE USER = '{name}'")
@@ -117,7 +152,7 @@ class Db_conn:
     def get_user_color(self,name : str):
         cur = self.get_cursor()
         cur.execute(f"SELECT COLOR FROM DISCORD_SCHEDULE.USERS WHERE USER = '{name}'")
-        return cur.fetchone()[0]
+        return cur.fetchone()['COLOR']
 
     def get_user_flag(self,name:str):
         cur = self.get_cursor()
@@ -140,7 +175,3 @@ def json_data_load(conn,file_name='data_load.json'):
         event['extendedProps'] = {'user':event['user'],'game':event['game'],'created':event['created']}
         del event['id']
         conn.add_event(event)
-
-db_conn = Db_conn('DISCORD_ADMIN','NiceLoginMan')
-db_conn.trunc_table('SCHEDULE_DATA')
-json_data_load(db_conn)
