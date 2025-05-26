@@ -12,7 +12,8 @@ class Db_conn:
             port="3306",
             database='DISCORD_SCHEDULE',
             user=str(db_user),
-            password=str(db_pw)
+            password=str(db_pw),
+            auth_plugin="mysql_native_password"
         )
         
         if self.connection is not None:
