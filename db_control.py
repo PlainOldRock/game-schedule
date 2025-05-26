@@ -79,9 +79,9 @@ class Db_conn:
         '{event_dict['start']}',
         '{event_dict['end']}',
         '{event_dict['backgroundColor']}',
-        '{event_dict['extendedProps']['user']}',
-        '{event_dict['extendedProps']['game']}',
-        '{event_dict['extendedProps']['created']}'
+        '{event_dict['user']}',
+        '{event_dict['game']}',
+        '{event_dict['created']}'
         )""")
         print(f"-----------------{ex_str}")
         cur.execute(ex_str)
