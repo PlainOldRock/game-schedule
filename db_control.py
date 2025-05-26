@@ -156,7 +156,7 @@ class Db_conn:
     def get_user_flag(self,name:str):
         cur = self.get_cursor()
         cur.execute(f"SELECT FLAG FROM DISCORD_SCHEDULE.USERS WHERE USER = '{name}'")
-        return cur.fetchone()[0]
+        return cur.fetchone()['FLAG']
     def close_conn(self):
         self.get_connection().commit()
         self.cursor.close()
