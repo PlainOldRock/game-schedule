@@ -6,7 +6,6 @@ from requests_oauthlib import OAuth2Session
 import json
 import os
 import user_cntl
-import db_control
 from datetime import date
 from datetime import timedelta
 from datetime import datetime
@@ -16,7 +15,7 @@ scope = ['identify']
 client_id = st.secrets["discord"]["client_id"]
 client_secret = st.secrets["discord"]["client_secret"]
 redirect_uri = st.secrets["discord"]["redirect_uri"]
-db_conn = db_control.Db_conn(st.secrets['db_conn']['db_user'],st.secrets['db_conn']['db_pw'])
+#db_conn = db_control.Db_conn(st.secrets['db_conn']['db_user'],st.secrets['db_conn']['db_pw'])
 
 
 authorization_base_url = f'https://discord.com/oauth2/authorize'
@@ -130,7 +129,11 @@ calendar_options = {
 }
 
 def get_initial_events():
-    dic = db_conn.get_data()
+    if os.path.exists("data.json"):
+        with open("data.json","r") as fo:
+            dic = json.load(fo)
+    else:
+        dic = {}
     return dic
 
 # Use cached events as default
