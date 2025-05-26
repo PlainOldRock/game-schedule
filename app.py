@@ -61,12 +61,12 @@ if 'code' in query_params:
                     fd.write("{}")
                 with open("users.json","w") as fd:
                     fd.write("")
-            id_arr = []
-            for event in st.session_state["events"]:
-                id_arr.append(event['id'])
-            id_sel = st.select_box("id to edit",value=None)
-            if id_sel is not None:
-                del st.session_state["events"][int(id_sel)]
+            #id_arr = []
+            #for event in st.session_state["events"]:
+            #    id_arr.append(event['id'])
+            #id_sel = st.select_box("id to edit",value=None)
+            #if id_sel is not None:
+            #    del st.session_state["events"][int(id_sel)]
     else:
         admin_mode = False
     if user_cntl.usersDB.check_user_exists(user_info["username"]):
@@ -130,7 +130,10 @@ calendar_options = {
 }
 
 def get_initial_events():
-    dic = db_conn.get_data()
+    dic = db_conn.get_data(ex_props=False)
+    global admin_mode
+    if admin_mode:
+        st.write(dic)
     return dic
 
 # Use cached events as default

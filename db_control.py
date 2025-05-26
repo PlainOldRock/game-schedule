@@ -29,25 +29,38 @@ class Db_conn:
     def get_connection(self):
         return self.connection
 
-    def get_data(self):
+    def get_data(self,ex_props=True):
         cur = self.get_cursor()
         cur.execute("SELECT * FROM DISCORD_SCHEDULE.SCHEDULE_DATA")
         data_array = cur.fetchall()
         data_dict = {}
         for dd in data_array:
-            data_dict[int(dd['ID'])] = {
-                "allDay":str(bool(dd['ALLDAY'])).lower(),
-                "title":dd['TITLE'],
-                "start":dd['START'],
-                "end":dd['END'],
-                "id":dd["ID"],
-                "backgroundColor":dd["BGCOLOR"],
-                "extendedProps":{
+            if ex_props:
+                data_dict[int(dd['ID'])] = {
+                    "allDay":False,
+                    "title":dd['TITLE'],
+                    "start":dd['START'],
+                    "end":dd['END'],
+                    "id":dd["ID"],
+                    "backgroundColor":dd["BGCOLOR"],
+                    "extendedProps":{
+                        "user":dd["USER"],
+                        "game":dd["GAME"],
+                        "created":dd["CREATED"]
+                    }
+                }
+            else:
+                data_dict[int(dd['ID'])] = {
+                    "allDay":False,
+                    "title":dd['TITLE'],
+                    "start":dd['START'],
+                    "end":dd['END'],
+                    "id":dd["ID"],
+                    "backgroundColor":dd["BGCOLOR"],
                     "user":dd["USER"],
                     "game":dd["GAME"],
                     "created":dd["CREATED"]
                 }
-            }
         return data_dict
 
     def add_event(self,event_dict):
