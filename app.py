@@ -333,12 +333,12 @@ def edit_event(state,id : int,user_name):
             db_conn.edit_event(id,'END',replace_time_on_date(st.session_state["events"][id]["end"],edit_start))
             db_conn.edit_event(id,'GAME',edit_game)
             get_initial_events()
-            st.rerun()
         elif delete_button:
             db_conn.del_event(id)
-            st.rerun()
     else:
         st.write("You can only edit your own events!")
+    return True
+
 if user_info is not None:
     if "callback" in state:
         add_event_called = st.button("Add New Event")
