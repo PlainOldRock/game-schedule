@@ -16,7 +16,7 @@ class Db_conn:
                 password=db_pw
             )
         except Error as e:
-            raise(f"Error in Connection {e}")
+            raise e(f"Error in Connection {e}")
         
         if self.connection is not None:
             self.cursor = self.connection.cursor(dictionary=True)
