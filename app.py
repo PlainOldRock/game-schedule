@@ -53,24 +53,14 @@ if 'code' in query_params:
         if admin_mode:
             reset_button = st.button("Reset")
             if reset_button:
-                empty_dict = {}
-                with open("data.json","w") as fd:
-                    fd.write("{}")
-                with open("users.json","w") as fd:
-                    fd.write("")
-            id_arr = []
-            for event in st.session_state["events"]:
-                id_arr.append(event['id'])
-            selection = st.select_box("id to edit",value=None)
-            if selection is not None:
-                print("No Delete")
+                db_conn.trunc_table('USERS')
+ 
 
     else:
         admin_mode = False
-    if user_cntl.usersDB.check_user_exists(user_info["username"]):
-        mouse = 1
-    else:
-        user_cntl.usersDB.create_new_user(user_info["username"])
+
+    if db_conn.check_user(user_info["username"]) == False:
+        db_conn.add_user(user_info["username"])
 else:
     auth_url = get_discord_auth_url()
     admin_mode = False
@@ -80,16 +70,15 @@ else:
 st.title("Gaming Week Part 2 Schedule")
 
 def update_colors(username : str, color):
-    for event in st.session_state["events"].values():
-        if event["user"] == username:
-            event["backgroundColor"] = color
+    db_conn.update_all_event_colors(username, color)
+    refresh_events()
     st.rerun()
 
 @st.dialog("Settings")
 def user_setting():
-    set_color = st.color_picker("Pick Your Color", value = user_cntl.usersDB.get_user(user_info["username"])["color"])
+    set_color = st.color_picker("Pick Your Color", value = db_conn.get_user_color(user_info['username']))
     if st.button("Apply"):
-        user_cntl.usersDB.set_color(user_info["username"],set_color)
+        db_conn.set_user_color(user_info["username"],set_color)
         update_colors(user_info["username"],set_color)
 
 if user_info is not None:
@@ -129,12 +118,14 @@ calendar_options = {
 }
 
 def get_initial_events():
-    if os.path.exists("data.json"):
-        with open("data.json","r") as fo:
-            dic = json.load(fo)
-    else:
-        dic = {}
+    dic = db_conn.get_data(ex_props=False)
+    global admin_mode
+    if admin_mode:
+        st.write(dic)
     return dic
+
+def refresh_events():
+    st.session_state["events"] = db_conn.get_data(ex_props=False)
 
 # Use cached events as default
 if "events" not in st.session_state:
@@ -235,8 +226,9 @@ def add_event(state):
                         "game": event_game,
                         "id":my_id,
                         "created":str(date.today()),
-                        "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
-                    }
+                        "backgroundColor":db_conn.get_user_color(user_info["username"])
+                    })
+                    refresh_events()
                     st.rerun()
                 else:
                     st.error("Events Can't Overlap")
@@ -271,16 +263,16 @@ def add_event_button():
                         break
                 if flag == False:
                     my_id = get_new_id()
-                    st.session_state['events'][my_id] = {
+                    db_conn.add_event({
                         "start": event_start,
                         "end":event_end,
                         "title": event_title + f"\n{user_info["username"]}\n{event_game}",
                         "user": user_info['username'],
                         "game": event_game,
-                        "id":my_id,
                         "created":str(date.today()),
-                        "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
-                    }
+                        "backgroundColor":db_conn.get_user_color(user_info['username'])
+                    })
+                    refresh_events()
                     st.rerun()
                 else:
                     st.error("Events Can't Overlap")
@@ -293,26 +285,30 @@ def replace_time(date_time_str,newtime):
     return date_time_str[:11] + str(newtime) + ".000Z"
 
 @st.dialog("Edit Event")
-def edit_event(state,id,user_name):
+def edit_event(state,id : int,user_name):
     global admin_mode
     if admin_mode:
         st.info(f"admin mode {admin_mode}")
     if (user_name == st.session_state["events"][id]["user"]) or admin_mode == True:  
+        cur_start = st.session_state["events"][id]["start"]
+        cur_end = st.session_state["events"][id]["end"]
         edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
-        start_val = st.time_input("start time",value=st.session_state["events"][id]["start"])
-        end_val = st.time_input("end time",value=st.session_state["events"][id]["end"])
+        start_val = st.time_input("start time",value=cur_start)
+        end_val = st.time_input("end time",value=cur_end)
         save_button = False
         delete_button = False
 
         flag = False
+        
         for event in st.session_state["events"].values():
+            if int(event['id']) != id:
+                if check_time_inv(replace_time(cur_start,start_val),event["start"],event["end"]) :
+                    flag = True
+                    break
+                elif check_time_inv(replace_time(cur_end,end_val),event["start"],event["end"]):
+                    flag = True
+                    break
             
-            if check_time_inv(replace_time(event["start"],start_val),event["start"],event["end"]):
-                flag = True
-                break
-            elif check_time_inv(replace_time(event["end"],end_val),event["start"],event["end"]):
-                flag = True
-                break
         if flag == True and admin_mode==False:
             st.error("Events Can't Overlap")
         elif start_val > end_val:
@@ -327,16 +323,20 @@ def edit_event(state,id,user_name):
             save_button = st.button("Save Changes")
             delete_button = st.button("Delete Event")
         if save_button:
-            st.session_state["events"][id]["title"] = edit_title
-            st.session_state["events"][id]["start"] = st.session_state["events"][id]["start"][:11] + edit_start + ".000Z"
-            st.session_state["events"][id]["end"] = st.session_state["events"][id]["end"][:11] + edit_end + ".000Z"
-            st.session_state["events"][id]["game"] = edit_game
+            db_conn.edit_event(id,'TITLE',edit_title)
+            db_conn.edit_event(id,'START',replace_time_on_date(st.session_state["events"][id]["start"],edit_start))
+            db_conn.edit_event(id,'END',replace_time_on_date(st.session_state["events"][id]["end"],edit_end))
+            db_conn.edit_event(id,'GAME',edit_game)
+            refresh_events()
             st.rerun()
         elif delete_button:
-            del st.session_state["events"][id]
+            db_conn.del_event(id)
+            refresh_events()
             st.rerun()
     else:
         st.write("You can only edit your own events!")
+    return True
+
 if user_info is not None:
     if "callback" in state:
         add_event_called = st.button("Add New Event")
@@ -347,11 +347,8 @@ if user_info is not None:
             st.toast("Save your changes with 'Save Events'!")
         elif state["callback"] == 'eventClick':
            #st.write(state)
-            edit_event(state,state["eventClick"]["event"]["id"],user_info["username"])
-    if st.button("Save Events"):
-        with open("data.json", "w") as fo:
-            json.dump(st.session_state['events'], fo)
-        st.success("Events saved successfully!")
+            edit_event(state,int(state["eventClick"]["event"]["id"]),user_info["username"])
 if admin_mode:
     st.write(state)
-    st.json(st.session_state["events"])
+    for event in st.session_state["events"].values():
+        st.write(f"{event['user']},{event['backgroundColor']}")
