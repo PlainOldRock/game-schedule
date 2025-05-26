@@ -5,6 +5,7 @@ import json
 
 class Db_conn:
     def __init__(self,db_user : str,db_pw : str):
+        self.connection = None
         try:
             self.connection = mysql.connector.connect(
                 host='plainoldrock.duckdns.org',
@@ -16,7 +17,7 @@ class Db_conn:
         except Error as e:
             print(f"Error in Connection {e}")
         
-        if self.connection.is_connected():
+        if self.connection is not None:
             self.cursor = self.connection.cursor(dictionary=True)
             print("MySQL connection is working")
         else:
@@ -140,7 +141,3 @@ def json_data_load(conn,file_name='data_load.json'):
         event['extendedProps'] = {'user':event['user'],'game':event['game'],'created':event['created']}
         del event['id']
         conn.add_event(event)
-
-db_conn = Db_conn('DISCORD_ADMIN','NiceLoginMan')
-db_conn.trunc_table('SCHEDULE_DATA')
-json_data_load(db_conn)
