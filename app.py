@@ -137,6 +137,9 @@ def get_initial_events():
         st.write(dic)
     return dic
 
+def refresh_events():
+    st.session_state["events"] = db_conn.get_data(ex_props=False)
+
 # Use cached events as default
 if "events" not in st.session_state:
     st.session_state["events"] = get_initial_events()
@@ -237,7 +240,7 @@ def add_event(state):
                         "created":str(date.today()),
                         "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
                     })
-                    get_initial_events()
+                    refresh_events()
                     st.rerun()
                 else:
                     st.error("Events Can't Overlap")
@@ -281,7 +284,7 @@ def add_event_button():
                         "created":str(date.today()),
                         "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
                     })
-                    get_initial_events()
+                    refresh_events()
                     st.rerun()
                 else:
                     st.error("Events Can't Overlap")
@@ -332,7 +335,7 @@ def edit_event(state,id : int,user_name):
             db_conn.edit_event(id,'START',replace_time_on_date(st.session_state["events"][id]["start"],edit_start))
             db_conn.edit_event(id,'END',replace_time_on_date(st.session_state["events"][id]["end"],edit_start))
             db_conn.edit_event(id,'GAME',edit_game)
-            get_initial_events()
+            refresh_events()
         elif delete_button:
             db_conn.del_event(id)
     else:
