@@ -12,8 +12,8 @@ class Db_conn:
                 host='plainoldrock.duckdns.org',
                 port="3306",
                 database='DISCORD_SCHEDULE',
-                user=db_user,
-                password=db_pw
+                user=str(db_user),
+                password=str(db_pw)
             )
         except Error as e:
             raise e(f"Error in Connection {e}")
