@@ -337,7 +337,7 @@ def edit_event(state,id : int,user_name):
         if save_button:
             db_conn.edit_event(id,'TITLE',edit_title)
             db_conn.edit_event(id,'START',replace_time_on_date(st.session_state["events"][id]["start"],edit_start))
-            db_conn.edit_event(id,'END',replace_time_on_date(st.session_state["events"][id]["end"],edit_start))
+            db_conn.edit_event(id,'END',replace_time_on_date(st.session_state["events"][id]["end"],edit_end))
             db_conn.edit_event(id,'GAME',edit_game)
             refresh_events()
             st.rerun()
