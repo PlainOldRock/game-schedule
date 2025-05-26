@@ -302,19 +302,22 @@ def edit_event(state,id : int,user_name):
     if admin_mode:
         st.info(f"admin mode {admin_mode}")
     if (user_name == st.session_state["events"][id]["user"]) or admin_mode == True:  
+        cur_start = st.session_state["events"][id]["start"]
+        cur_end = st.session_state["events"][id]["end"]
         edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
-        start_val = st.time_input("start time",value=st.session_state["events"][id]["start"])
-        end_val = st.time_input("end time",value=st.session_state["events"][id]["end"])
+        start_val = st.time_input("start time",value=)
+        end_val = st.time_input("end time",value=)
         save_button = False
         delete_button = False
 
         flag = False
+        
         for event in st.session_state["events"].values():
             if int(event['id']) != id:
-                if check_time_inv(replace_time(event["start"],start_val),event["start"],event["end"]) :
+                if check_time_inv(replace_time(cur_start,start_val),event["start"],event["end"]) :
                     flag = True
                     break
-                elif check_time_inv(replace_time(event["end"],end_val),event["start"],event["end"]):
+                elif check_time_inv(replace_time(cur_end,end_val),event["start"],event["end"]):
                     flag = True
                     break
             
