@@ -9,6 +9,7 @@ import user_cntl
 from datetime import date
 from datetime import timedelta
 from datetime import datetime
+import db_control
 
 scope = ['identify']
 
@@ -22,6 +23,7 @@ user_info_url = 'https://discord.com/api/users/@me'
 
 user_info = None
 
+db_conn = db_control.Db_conn(st.secrets["db_conn"]["db_user"],st.secrets["db_conn"]["db_pw"])
 
 def get_discord_auth_url():
     discord = OAuth2Session(client_id, redirect_uri=redirect_uri, scope=scope)
