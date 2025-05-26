@@ -83,9 +83,8 @@ else:
 st.title("Gaming Week Part 2 Schedule")
 
 def update_colors(username : str, color):
-    for event in st.session_state["events"].values():
-        if event["user"] == username:
-            event["backgroundColor"] = color
+    db_conn.update_all_event_colors(username, color)
+    refresh_events()
     st.rerun()
 
 @st.dialog("Settings")
