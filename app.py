@@ -355,10 +355,6 @@ if user_info is not None:
         elif state["callback"] == 'eventClick':
            #st.write(state)
             edit_event(state,int(state["eventClick"]["event"]["id"]),user_info["username"])
-    if st.button("Save Events"):
-        with open("data.json", "w") as fo:
-            json.dump(st.session_state['events'], fo)
-        st.success("Events saved successfully!")
 if admin_mode:
     st.write(state)
-    st.json(st.session_state["events"])
+    st.json(st.session_state["events"]['color'])
