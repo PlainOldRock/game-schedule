@@ -138,10 +138,10 @@ class Db_conn:
     def check_user(self,name : str):
         cur = self.get_cursor()
         cur.execute(f"SELECT COUNT(*) U_CHECK FROM DISCORD_SCHEDULE.USERS WHERE USER = '{name}'")
-        if cur.fetchone()['U_CHECK'] == 0:
-            return False
-        else:
+        if cur.fetchone()['U_CHECK'] > 0:
             return True
+        else:
+            return False
 
     def set_user_color(self,name : str, color : str):
         cur = self.get_cursor()
