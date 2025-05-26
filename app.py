@@ -15,8 +15,6 @@ scope = ['identify']
 client_id = st.secrets["discord"]["client_id"]
 client_secret = st.secrets["discord"]["client_secret"]
 redirect_uri = st.secrets["discord"]["redirect_uri"]
-#db_conn = db_control.Db_conn(st.secrets['db_conn']['db_user'],st.secrets['db_conn']['db_pw'])
-
 
 authorization_base_url = f'https://discord.com/oauth2/authorize'
 token_url = 'https://discord.com/api/oauth2/token'
@@ -63,9 +61,8 @@ if 'code' in query_params:
             id_arr = []
             for event in st.session_state["events"]:
                 id_arr.append(event['id'])
-            id_sel = st.select_box("id to edit",value=None)
-            if id_sel is not None:
-                del st.session_state["events"][int(id_sel)]
+            selection = st.select_box("id to edit",value=None):
+
     else:
         admin_mode = False
     if user_cntl.usersDB.check_user_exists(user_info["username"]):
@@ -98,6 +95,7 @@ if user_info is not None:
     setting_button = st.button("settings")
     if setting_button:
         user_setting()
+    
 else:
     editable="false"
 
@@ -227,15 +225,16 @@ def add_event(state):
                         break
                 if flag == False:
                     my_id = get_new_id()
-                    db_conn.add_event({
+                    st.session_state['events'][my_id] = {
                         "start": event_start,
                         "end":event_end,
-                        "title": event_title + f"\n{user_info['username']}\n{event_game}",
+                        "title": event_title + f"\n{user_info["username"]}\n{event_game}",
                         "user": user_info['username'],
                         "game": event_game,
+                        "id":my_id,
                         "created":str(date.today()),
                         "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
-                    })
+                    }
                     st.rerun()
                 else:
                     st.error("Events Can't Overlap")
@@ -273,7 +272,7 @@ def add_event_button():
                     st.session_state['events'][my_id] = {
                         "start": event_start,
                         "end":event_end,
-                        "title": event_title + f"\n{user_info['username']}\n{event_game}",
+                        "title": event_title + f"\n{user_info["username"]}\n{event_game}",
                         "user": user_info['username'],
                         "game": event_game,
                         "id":my_id,
