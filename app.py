@@ -246,7 +246,7 @@ def add_event(state):
             else:
                 st.error("Event Can't be longer than 3 hours!")
         else:
-            st.error("You can only add {event_day_limit} events per day!")
+            st.error(f"You can only add {event_day_limit} events per day!")
         
 @st.dialog("Add Event Button")
 def add_event_button():
@@ -291,7 +291,7 @@ def add_event_button():
             else:
                 st.error("Event Can't be longer than 3 hours!")
         else:
-            st.error("You can only add {event_day_limit} events per day!")
+            st.error(f"You can only add {event_day_limit} events per day!")
 
 def replace_time(date_time_str,newtime):
     return date_time_str[:11] + str(newtime) + ".000Z"
