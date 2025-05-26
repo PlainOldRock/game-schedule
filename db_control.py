@@ -74,7 +74,7 @@ class Db_conn:
             CREATED
             ) 
             VALUES(
-        {event_dict['allDay']},
+        0,
         '{event_dict['title']}',
         '{event_dict['start']}',
         '{event_dict['end']}',
