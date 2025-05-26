@@ -2,6 +2,7 @@
 import mysql.connector
 from mysql.connector import Error
 import json
+import random
 
 class Db_conn:
     def __init__(self,db_user : str,db_pw : str):
@@ -127,12 +128,22 @@ class Db_conn:
             return event_dict
         else:
             return None
-    def add_user(self,name : str,color : str, flag = ''):
+    def add_user(self,name, flag = ''):
+        color = f"#{random.randint(1,16777215):06x}"
+
         cur = self.get_cursor()
         cur.execute(f"INSERT INTO DISCORD_SCHEDULE.USERS VALUE('{name}','{color}','{flag}')")
         self.get_connection().commit()
         return cur.fetchall()
     
+    def check_user(self,name : str):
+        cur = self.get_cursor()
+        cur.execute(f"SELECT COUNT(*) FROM DISCORD_SCHEDULE.USERS WHERE USER = '{name}'")
+        if cur.fetchone()[0] == 0:
+            return False
+        else:
+            return True
+
     def set_user_color(self,name : str, color : str):
         cur = self.get_cursor()
         cur.execute(f"UPDATE DISCORD_SCHEDULE.USERS SET COLOR = '{color}' WHERE USER = '{name}'")

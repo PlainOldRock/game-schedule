@@ -56,11 +56,8 @@ if 'code' in query_params:
         if admin_mode:
             reset_button = st.button("Reset")
             if reset_button:
-                empty_dict = {}
-                with open("data.json","w") as fd:
-                    fd.write("{}")
-                with open("users.json","w") as fd:
-                    fd.write("")
+                db_conn.trunc_table('USERS')
+                
             #id_arr = []
             #for event in st.session_state["events"]:
             #    id_arr.append(event['id'])
@@ -70,10 +67,9 @@ if 'code' in query_params:
             # WOrk pls
     else:
         admin_mode = False
-    if user_cntl.usersDB.check_user_exists(user_info["username"]):
-        mouse = 1
-    else:
-        user_cntl.usersDB.create_new_user(user_info["username"])
+
+    if db_conn.check_user(user_info["username"]) == False:
+        db_conn.create_new_user(user_info["username"])
 else:
     auth_url = get_discord_auth_url()
     admin_mode = False
