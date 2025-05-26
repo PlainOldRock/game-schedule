@@ -125,6 +125,7 @@ calendar_options = {
         "start": "2025-05-26",
         "end": "2025-06-02"  # End is exclusive, so use the day after June 1st
     },
+    "contentHeight":800,
     "expandRows": True,
     "allDaySlot": False,
 }
@@ -295,9 +296,11 @@ def edit_event(state,id,user_name):
     if admin_mode:
         st.info(f"admin mode {admin_mode}")
     if (user_name == st.session_state["events"][id]["user"]) or admin_mode == True:  
-        edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
-        start_val = st.time_input("start time",value=st.session_state["events"][id]["start"])
-        end_val = st.time_input("end time",value=st.session_state["events"][id]["end"])
+        cur_start = st.session_state["events"][id]["start"]
+        cur_end = st.session_state["events"][id]["end"]
+        edit_title = st.text_input("title",value=db_conn.get_event(id)['title'])
+        start_val = st.time_input("start time",value=cur_start)
+        end_val = st.time_input("end time",value=cur_end)
         save_button = False
         delete_button = False
 
