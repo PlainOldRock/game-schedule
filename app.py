@@ -358,4 +358,4 @@ if user_info is not None:
 if admin_mode:
     st.write(state)
     for event in st.session_state["events"].values():
-        st.write(f"{event['user']},{event['color']}")
+        st.write(f"{event['user']},{event['backgroundColor']}")
