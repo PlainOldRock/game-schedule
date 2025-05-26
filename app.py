@@ -61,7 +61,9 @@ if 'code' in query_params:
             id_arr = []
             for event in st.session_state["events"]:
                 id_arr.append(event['id'])
-            selection = st.select_box("id to edit",value=None):
+            selection = st.select_box("id to edit",value=None)
+            if selection is not None:
+                print("No Delete")
 
     else:
         admin_mode = False
