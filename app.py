@@ -102,7 +102,7 @@ calendar_options = {
     "initialView": "timeGridWeek",
     "start": cal_start,
     "end": cal_end,
-    "slotMinTime": "17:00:00",
+    "slotMinTime": "12:00:00",
     "slotMaxTime": "23:00:00",
     "firstDay": 1,
     "selectMirror": "true",
