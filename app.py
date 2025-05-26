@@ -221,7 +221,7 @@ def add_event(state):
                         break
                 if flag == False:
                     my_id = get_new_id()
-                    st.session_state['events'][my_id] = {
+                    db_conn.add_event({
                         "start": event_start,
                         "end":event_end,
                         "title": event_title + f"\n{user_info['username']}\n{event_game}",
@@ -230,7 +230,7 @@ def add_event(state):
                         "id":my_id,
                         "created":str(date.today()),
                         "backgroundColor":db_conn.get_user_color(user_info["username"])
-                    }
+                    })
                     refresh_events()
                     st.rerun()
                 else:
