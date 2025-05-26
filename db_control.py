@@ -7,16 +7,13 @@ class Db_conn:
     def __init__(self,db_user : str,db_pw : str):
         self.connection = None
         self.cursor = None
-        try:
-            self.connection = mysql.connector.connect(
-                host='plainoldrock.duckdns.org',
-                port="3306",
-                database='DISCORD_SCHEDULE',
-                user=str(db_user),
-                password=str(db_pw)
-            )
-        except Error as e:
-            raise e(f"Error in Connection {e}")
+        self.connection = mysql.connector.connect(
+            host='plainoldrock.duckdns.org',
+            port="3306",
+            database='DISCORD_SCHEDULE',
+            user=str(db_user),
+            password=str(db_pw)
+        )
         
         if self.connection is not None:
             self.cursor = self.connection.cursor(dictionary=True)
