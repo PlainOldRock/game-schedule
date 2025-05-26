@@ -9,7 +9,7 @@ class Db_conn:
         self.connection = None
         self.cursor = None
         self.connection = mysql.connector.connect(
-            host='plainoldrock.duckdns.org',
+            host='ultihouseserver.wampus-pickerel.ts.net',
             port="3306",
             database='DISCORD_SCHEDULE',
             user=str(db_user),
