@@ -85,9 +85,9 @@ def update_colors(username : str, color):
 
 @st.dialog("Settings")
 def user_setting():
-    set_color = st.color_picker("Pick Your Color", value = user_cntl.usersDB.get_user(user_info["username"])["color"])
+    set_color = st.color_picker("Pick Your Color", value = db_conn.get_user_color(user_info['username']))
     if st.button("Apply"):
-        user_cntl.usersDB.set_color(user_info["username"],set_color)
+        db_conn.set_user_color(user_info["username"],set_color)
         update_colors(user_info["username"],set_color)
 
 if user_info is not None:
@@ -233,7 +233,7 @@ def add_event(state):
                         "user": user_info['username'],
                         "game": event_game,
                         "created":str(date.today()),
-                        "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
+                        "backgroundColor":db_conn.get_user_color(user_info["username"])
                     })
                     refresh_events()
                     st.rerun()
@@ -277,7 +277,7 @@ def add_event_button():
                         "user": user_info['username'],
                         "game": event_game,
                         "created":str(date.today()),
-                        "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
+                        "backgroundColor":db_conn.get_user_color(user_info['username'])
                     })
                     refresh_events()
                     st.rerun()
