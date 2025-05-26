@@ -305,8 +305,8 @@ def edit_event(state,id : int,user_name):
         cur_start = st.session_state["events"][id]["start"]
         cur_end = st.session_state["events"][id]["end"]
         edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
-        start_val = st.time_input("start time",value=)
-        end_val = st.time_input("end time",value=)
+        start_val = st.time_input("start time",value=cur_start)
+        end_val = st.time_input("end time",value=cur_end)
         save_button = False
         delete_button = False
 
