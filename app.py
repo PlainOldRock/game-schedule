@@ -69,7 +69,7 @@ if 'code' in query_params:
         admin_mode = False
 
     if db_conn.check_user(user_info["username"]) == False:
-        db_conn.create_new_user(user_info["username"])
+        db_conn.add_user(user_info["username"])
 else:
     auth_url = get_discord_auth_url()
     admin_mode = False
