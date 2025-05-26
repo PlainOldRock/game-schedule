@@ -84,7 +84,6 @@ class Db_conn:
         '{event_dict['game']}',
         '{event_dict['created']}'
         )""")
-        print(f"-----------------{ex_str}")
         cur.execute(ex_str)
         ret = cur.fetchall()
         self.get_connection().commit()
@@ -92,7 +91,7 @@ class Db_conn:
 
     def update_all_event_colors(self,username : str, color : str):
         cur = self.get_cursor()
-        cur.execute(f"UPDATE DISCORD_SCHEDULE.SCHEDULE_DATA SET BGCOLOR = '{color}' WHERE USER = '{username}'")
+        cur.execute(f"UPDATE DISCORD_SCHEDULE.SCHEDULE_DATA SET BGCOLOR = '{color}' WHERE USER = '{username}' AND GAME != 'Work'")
         self.get_connection().commit()
         return True
 
@@ -139,10 +138,10 @@ class Db_conn:
     def check_user(self,name : str):
         cur = self.get_cursor()
         cur.execute(f"SELECT COUNT(*) U_CHECK FROM DISCORD_SCHEDULE.USERS WHERE USER = '{name}'")
-        if cur.fetchone()['U_CHECK'] == 0:
-            return False
-        else:
+        if cur.fetchone()['U_CHECK'] > 0:
             return True
+        else:
+            return False
 
     def set_user_color(self,name : str, color : str):
         cur = self.get_cursor()
@@ -157,7 +156,7 @@ class Db_conn:
     def get_user_flag(self,name:str):
         cur = self.get_cursor()
         cur.execute(f"SELECT FLAG FROM DISCORD_SCHEDULE.USERS WHERE USER = '{name}'")
-        return cur.fetchone()[0]
+        return cur.fetchone()['FLAG']
     def close_conn(self):
         self.get_connection().commit()
         self.cursor.close()
