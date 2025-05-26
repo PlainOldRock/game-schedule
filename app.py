@@ -272,16 +272,16 @@ def add_event_button():
                         break
                 if flag == False:
                     my_id = get_new_id()
-                    st.session_state['events'][my_id] = {
+                    db_conn.add_event({
                         "start": event_start,
                         "end":event_end,
-                        "title": event_title + f"\n{user_info["username"]}\n{event_game}",
+                        "title": event_title + f"\n{user_info['username']}\n{event_game}",
                         "user": user_info['username'],
                         "game": event_game,
-                        "id":my_id,
                         "created":str(date.today()),
                         "backgroundColor":user_cntl.usersDB.get_user(user_info["username"])["color"]
-                    }
+                    })
+                    get_initial_events()
                     st.rerun()
                 else:
                     st.error("Events Can't Overlap")
@@ -348,7 +348,7 @@ if user_info is not None:
             st.toast("Save your changes with 'Save Events'!")
         elif state["callback"] == 'eventClick':
            #st.write(state)
-            edit_event(state,state["eventClick"]["event"]["id"],user_info["username"])
+            edit_event(state,int(state["eventClick"]["event"]["id"]),user_info["username"])
     if st.button("Save Events"):
         with open("data.json", "w") as fo:
             json.dump(st.session_state['events'], fo)
