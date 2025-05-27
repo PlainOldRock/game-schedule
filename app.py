@@ -9,10 +9,15 @@ import user_cntl
 from datetime import date
 from datetime import timedelta
 from datetime import datetime
+import db_control
+
+
+db_conn = db_control.Db_conn(st.secrets["db_conn"]["db_user"],st.secrets["db_conn"]["db_pw"])
 
 import db_control
 
 scope = ['identify']
+event_day_limit = 2
 
 client_id = st.secrets["discord"]["client_id"]
 client_secret = st.secrets["discord"]["client_secret"]
@@ -94,7 +99,7 @@ else:
     editable="false"
 
 cal_start = "2025-05-26"
-cal_end = "2025-05-31"
+cal_end = "2025-06-01"
 calendar_options = {
     "editable": "false",
     "navLinks": "true",
@@ -102,7 +107,7 @@ calendar_options = {
     "initialView": "timeGridWeek",
     "start": cal_start,
     "end": cal_end,
-    "slotMinTime": "17:00:00",
+    "slotMinTime": "12:00:00",
     "slotMaxTime": "23:00:00",
     "firstDay": 1,
     "selectMirror": "true",
@@ -116,6 +121,7 @@ calendar_options = {
         "start": "2025-05-26",
         "end": "2025-06-02"  # End is exclusive, so use the day after June 1st
     },
+    "contentHeight":800,
     "expandRows": True,
     "allDaySlot": False,
 }
@@ -171,16 +177,22 @@ def get_new_id():
             fp.write(str(inc))
     return str(inc)
 
-def check_today_entries():
+def check_today_entries(limit:int=2):
     num_entry = 0
     global user_info
-    
+    if db_conn.get_user_flag(user_info["username"]) == "B":
+        limit = 3
+
     for event in st.session_state["events"].values():
         #st.write(f"{event["created"]} == {date.today()}")
         if user_info["username"] == event["user"]:
             if event["created"] == str(date.today()):
                 num_entry += 1
-    return num_entry
+    
+    if num_entry < limit:
+        return True
+    else:
+        return False
 
 def check_time_inv(check_time_str,start_time_str,end_time_str):
     str_format = '%Y-%m-%dT%H:%M:%S.%fZ'
@@ -208,53 +220,9 @@ def add_event(state):
     
     event_end = replace_time_on_date(state["select"]["end"],str(st.time_input("End Time", value=state["select"]["end"])))
     global admin_mode
+    global event_day_limit
     if st.button("Add Event"):
-        if check_today_entries() < 2 or admin_mode:
-            if check_three_hour_limit(event_start,event_end) or admin_mode:
-                flag = False
-                for event in st.session_state["events"].values():
-                    if check_time_inv(event_start,event["start"],event["end"]):
-                        flag = True
-                        break
-                    elif check_time_inv(event_end,event["start"],event["end"]):
-                        flag = True
-                        break
-                if flag == False:
-                    my_id = get_new_id()
-                    st.session_state['events'][my_id] = {
-                        "start": event_start,
-                        "end":event_end,
-                        "title": event_title + f"\n{user_info["username"]}\n{event_game}",
-                        "user": user_info['username'],
-                        "game": event_game,
-                        "id":my_id,
-                        "created":str(date.today()),
-                        "backgroundColor":db_conn.get_user_color(user_info["username"])
-                    }
-                    refresh_events()
-                    st.rerun()
-                else:
-                    st.error("Events Can't Overlap")
-            else:
-                st.error("Event Can't be longer than 3 hours!")
-        else:
-            st.error("You can only add 2 events per day!")
-        
-@st.dialog("Add Event Button")
-def add_event_button():
-    event_title = st.text_input("Event Title")
-    event_game = st.text_input("Game")
-    
-    event_date = str(st.date_input("Day",min_value=cal_start,max_value=cal_end,format="YYYY-MM-DD"))
-    
-    #"%Y-%m-%dT%H:%M:%S.%fZ"
-    start_time = st.time_input("start time",value="17:00")
-    end_time = st.time_input("end time",value="20:00")
-    event_start = f"{event_date}T{start_time.hour:02d}:{start_time.minute:02d}:00.000Z"
-    event_end = f"{event_date}T{end_time.hour:02d}:{end_time.minute:02d}:00.000Z"
-    global admin_mode
-    if st.button("Add Event"):
-        if check_today_entries() < 2 or admin_mode:
+        if check_today_entries() or admin_mode:
             if check_three_hour_limit(event_start,event_end) or admin_mode:
                 flag = False
                 for event in st.session_state["events"].values():
@@ -269,7 +237,53 @@ def add_event_button():
                     db_conn.add_event({
                         "start": event_start,
                         "end":event_end,
-                        "title": event_title + f"\n{user_info["username"]}\n{event_game}",
+                        "title": event_title + f"\n{user_info['username']}\n{event_game}",
+                        "user": user_info['username'],
+                        "game": event_game,
+                        "id":my_id,
+                        "created":str(date.today()),
+                        "backgroundColor":db_conn.get_user_color(user_info["username"])
+                    })
+                    refresh_events()
+                    st.rerun()
+                else:
+                    st.error("Events Can't Overlap")
+            else:
+                st.error("Event Can't be longer than 3 hours!")
+        else:
+            st.error(f"You can only add {event_day_limit} events per day!")
+        
+@st.dialog("Add Event Button")
+def add_event_button():
+    event_title = st.text_input("Event Title")
+    event_game = st.text_input("Game")
+    
+    event_date = str(st.date_input("Day",min_value=cal_start,max_value=cal_end,format="YYYY-MM-DD"))
+    
+    #"%Y-%m-%dT%H:%M:%S.%fZ"
+    start_time = st.time_input("start time",value="17:00")
+    end_time = st.time_input("end time",value="20:00")
+    event_start = f"{event_date}T{start_time.hour:02d}:{start_time.minute:02d}:00.000Z"
+    event_end = f"{event_date}T{end_time.hour:02d}:{end_time.minute:02d}:00.000Z"
+    global admin_mode
+    global event_day_limit
+    if st.button("Add Event"):
+        if check_today_entries() or admin_mode:
+            if check_three_hour_limit(event_start,event_end) or admin_mode:
+                flag = False
+                for event in st.session_state["events"].values():
+                    if check_time_inv(event_start,event["start"],event["end"]):
+                        flag = True
+                        break
+                    elif check_time_inv(event_end,event["start"],event["end"]):
+                        flag = True
+                        break
+                if flag == False:
+                    my_id = get_new_id()
+                    db_conn.add_event({
+                        "start": event_start,
+                        "end":event_end,
+                        "title": event_title + f"\n{user_info['username']}\n{event_game}",
                         "user": user_info['username'],
                         "game": event_game,
                         "created":str(date.today()),
@@ -282,7 +296,7 @@ def add_event_button():
             else:
                 st.error("Event Can't be longer than 3 hours!")
         else:
-            st.error("You can only add 2 events per day!")
+            st.error(f"You can only add {event_day_limit} events per day!")
 
 def replace_time(date_time_str,newtime):
     return date_time_str[:11] + str(newtime) + ".000Z"
@@ -295,7 +309,7 @@ def edit_event(state,id : int,user_name):
     if (user_name == st.session_state["events"][id]["user"]) or admin_mode == True:  
         cur_start = st.session_state["events"][id]["start"]
         cur_end = st.session_state["events"][id]["end"]
-        edit_title = st.text_input("title",value=st.session_state["events"][id]["title"])
+        edit_title = st.text_input("title",value=db_conn.get_event(id)['title'])
         start_val = st.time_input("start time",value=cur_start)
         end_val = st.time_input("end time",value=cur_end)
         save_button = False

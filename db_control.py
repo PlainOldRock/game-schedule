@@ -9,7 +9,7 @@ class Db_conn:
         self.connection = None
         self.cursor = None
         self.connection = mysql.connector.connect(
-            host='ultihouseserver.wampus-pickerel.ts.net',
+            host='plainoldrock.duckdns.org',
             port="3306",
             database='DISCORD_SCHEDULE',
             user=str(db_user),
@@ -92,7 +92,7 @@ class Db_conn:
 
     def update_all_event_colors(self,username : str, color : str):
         cur = self.get_cursor()
-        cur.execute(f"UPDATE DISCORD_SCHEDULE.SCHEDULE_DATA SET BGCOLOR = '{color}' WHERE USER = '{username}'")
+        cur.execute(f"UPDATE DISCORD_SCHEDULE.SCHEDULE_DATA SET BGCOLOR = '{color}' WHERE USER = '{username}' AND GAME != 'Work'")
         self.get_connection().commit()
         return True
 
@@ -157,7 +157,7 @@ class Db_conn:
     def get_user_flag(self,name:str):
         cur = self.get_cursor()
         cur.execute(f"SELECT FLAG FROM DISCORD_SCHEDULE.USERS WHERE USER = '{name}'")
-        return cur.fetchone()[0]
+        return cur.fetchone()['FLAG']
     def close_conn(self):
         self.get_connection().commit()
         self.cursor.close()
