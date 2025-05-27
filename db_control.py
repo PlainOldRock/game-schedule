@@ -15,7 +15,6 @@ class Db_conn:
             user=str(db_user),
             password=str(db_pw),
             auth_plugin="mysql_native_password",
-            ssl_disabled = True
         )
         
         if self.connection is not None:
